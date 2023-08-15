@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './App.css';
-import schema from './schemas/schema.json'
+import schema from './schemas/schema_2.json'
 
 function App() {
   const initialFields = schema
@@ -44,16 +44,21 @@ function App() {
   return (
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div style={{ display: 'flex', width: '100%', height: '100vh' }}>
+        <div style={{ display: 'flex', width: '100%', minHeight: "calc(100vh - 20px)"}}>
           <Droppable droppableId="left-list">
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 style={{
+                  minHeight: "calc(100vh - 20px)",
                   width: '20%',
                   height: '100%',
                   background: 'blue',
                   padding: 10,
+                  gap: "10px",
+                  display: "flex",
+                  flexDirection: "column"
+
                 }}
                 {...provided.droppableProps}
               >
@@ -66,8 +71,7 @@ function App() {
                         {...provided.dragHandleProps}
                         style={{
                           padding: '10px',
-                          width: 'fit-content',
-                          margin: '0 0 8px 0',
+                          width: "calc(100% - 20px)",
                           backgroundColor: 'white',
                           ...provided.draggableProps.style,
                         }}
@@ -84,10 +88,11 @@ function App() {
           <div 
           style={{
             width: '100%',
-            height: '100vh',
+            minHeight: "calc(100vh - 20px)",
             background: 'red',
             padding: 10,
             display: 'flex',
+            
             gap: '10px'
           }}
           >
@@ -98,6 +103,8 @@ function App() {
                 style={{
                   background: 'green',
                   height: 'fit-content',
+                  minHeight: '40px',
+                  minWidth: '40px',
                   padding: 10,
                   display: 'flex',
                   gap: '10px'
@@ -112,7 +119,8 @@ function App() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         style={{
-                          width: 'fit-content',
+                          minWidth: '150px',
+                          textAlign: "center",
                           padding: '10px',
                           backgroundColor: 'white',
                           ...provided.draggableProps.style,
