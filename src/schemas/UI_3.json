@@ -1,0 +1,124 @@
+[
+  [
+    [
+      [
+        {
+          "field": "NDefOb"
+        }
+      ],
+      [
+        {
+          "field": "TtDefOb"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "PopisOb"
+        }
+      ],
+      [
+        {
+          "field": "DefObNadr"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "DefHl"
+        }
+      ],
+      [
+        {
+          "field": "StlTyp"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LSys"
+        }
+      ],
+      [
+        {
+          "field": "LSpravca"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Hodn"
+        }
+      ],
+      [
+        {
+          "field": "LOdkaz"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LEuro"
+        }
+      ],
+      [
+        {
+          "field": "HodnEuro"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LUz"
+        }
+      ],
+      [
+        {
+          "field": "LOrg"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "ObjPropC"
+        }
+      ],
+      [
+        {
+          "field": "Tab"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "CZorad"
+        }
+      ],
+      [
+        {
+          "field": "Pozn"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Zrus"
+        }
+      ],
+      [
+        {
+          "field": "IDefOb"
+        }
+      ]
+    ]
+  ]
+]
