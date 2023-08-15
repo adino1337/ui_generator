@@ -1,0 +1,103 @@
+[
+  [
+    [
+      [
+        {
+          "field": "NUz"
+        }
+      ],
+      [
+        {
+          "field": "TtUz"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "SkrUz"
+        }
+      ],
+      [
+        {
+          "field": "Uro"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Email"
+        }
+      ],
+      [
+        {
+          "field": "LPlatnost"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Heslo"
+        }
+      ],
+      [
+        {
+          "field": "UzIss"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LExpir"
+        }
+      ],
+      [
+        {
+          "field": "DZmena"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "DExpir"
+        }
+      ],
+      [
+        {
+          "field": "DUkonc"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LOrg"
+        }
+      ],
+      [
+        {
+          "field": "NDomena"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Pozn"
+        },
+        {
+          "field": "IUz"
+        }
+      ],
+      [
+        {
+          "field": "Zrus"
+        }
+      ]
+    ]
+  ]
+]

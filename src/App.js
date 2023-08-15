@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './App.css';
-import schema from './schemas/schema_3.json'
+import schema from './schemas/schema.json'
 
 function App() {
   const initialFields = schema

@@ -1,0 +1,115 @@
+[
+  [
+    [
+      [
+        {
+          "field": "NMnu"
+        }
+      ],
+      [
+        {
+          "field": "SkrMnu"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "MnuNadr"
+        }
+      ],
+      [
+        {
+          "field": "MnuTyp"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "NMnuAlt"
+        }
+      ],
+      [
+        {
+          "field": "SkrKlaves"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Prj"
+        }
+      ],
+      [
+        {
+          "field": "NNapoved"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "IZobraz"
+        }
+      ],
+      [
+        {
+          "field": "Frm"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Kmpnt"
+        }
+      ],
+      [
+        {
+          "field": "IkoCesta"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "NavigCesta"
+        }
+      ],
+      [
+        {
+          "field": "CssCesta"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "LSys"
+        }
+      ],
+      [
+        {
+          "field": "CZorad"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "field": "Pozn"
+        },
+        {
+          "field": "IMnu"
+        }
+      ],
+      [
+        {
+          "field": "Zrus"
+        }
+      ]
+    ]
+  ]
+]
