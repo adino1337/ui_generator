@@ -7,7 +7,7 @@ function App() {
   const initialFields = schema
 
   const [leftFields, setLeftFields] = useState(initialFields);
-  const [rightFields, setRightFields] = useState([]);
+  const [rightFieldGroups, setRightFieldGroups] = useState([[]]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -23,22 +23,48 @@ function App() {
         updatedFields.splice(result.destination.index, 0, movedField);
         setLeftFields(updatedFields);
       } else {
-        const updatedFields = Array.from(rightFields);
-        const [movedField] = updatedFields.splice(result.source.index, 1);
-        updatedFields.splice(result.destination.index, 0, movedField);
-        setRightFields(updatedFields);
+        const updatedGroups = [...rightFieldGroups];
+        const groupIndex = parseInt(sourceList.split('-')[1]);
+        const updatedGroup = [...updatedGroups[groupIndex]];
+        const [movedField] = updatedGroup.splice(result.source.index, 1);
+        updatedGroup.splice(result.destination.index, 0, movedField);
+        updatedGroups[groupIndex] = updatedGroup;
+        setRightFieldGroups(updatedGroups);
       }
     } else {
       // Presúvame z jedného zoznamu do druhého
-      const sourceFields = sourceList === 'left-list' ? leftFields : rightFields;
-      const destinationFields = destinationList === 'left-list' ? leftFields : rightFields;
+      const sourceFields = sourceList === 'left-list' ? leftFields : rightFieldGroups[parseInt(sourceList.split('-')[1])];
+      const destinationFields = destinationList === 'left-list' ? leftFields : rightFieldGroups[parseInt(destinationList.split('-')[1])];
   
       const [movedField] = sourceFields.splice(result.source.index, 1);
       destinationFields.splice(result.destination.index, 0, movedField);
   
-      setLeftFields([...leftFields]);
-      setRightFields([...rightFields]);
+      if (sourceList === 'left-list') {
+        setLeftFields([...sourceFields]);
+      } else {
+        const updatedGroups = [...rightFieldGroups];
+        const sourceGroupIndex = parseInt(sourceList.split('-')[1]);
+        const destinationGroupIndex = parseInt(destinationList.split('-')[1]);
+        updatedGroups[sourceGroupIndex] = sourceFields;
+        updatedGroups[destinationGroupIndex] = destinationFields;
+        setRightFieldGroups(updatedGroups);
+      }
     }
+    if(sourceList !== 'left-list') {
+    const updatedGroups = rightFieldGroups.filter(group => group.length > 0);
+    setRightFieldGroups(updatedGroups);
+    }
+    
+  };
+  
+  if (rightFieldGroups.length === 0) {
+    const updatedGroups = [[]]; 
+    setRightFieldGroups(updatedGroups);
+  }
+
+  const addNewFieldGroup = () => {
+    const newFieldGroup = [];
+    setRightFieldGroups([...rightFieldGroups, newFieldGroup]);
   };
 
   return (
@@ -52,7 +78,8 @@ function App() {
                 style={{
                   minHeight: "calc(100vh - 20px)",
                   width: '20%',
-                  height: '100%',
+                  height: 'calc(100vh - 20px)',
+                  overflowY: "scroll",
                   background: 'blue',
                   padding: 10,
                   gap: "10px",
@@ -84,43 +111,48 @@ function App() {
                 {provided.placeholder}
               </div>
             )}
+            
           </Droppable>
           <div 
-          style={{
-            width: '100%',
-            minHeight: "calc(100vh - 20px)",
-            background: 'red',
-            padding: 10,
-            display: 'flex',
-            
-            gap: '10px'
-          }}
+            style={{
+              width: '60%',
+              minHeight: "calc(100vh - 20px)",
+              background: 'red',
+              padding: 10,
+              display: 'flex',
+              flexDirection: "column",
+              gap: '10px'
+            }}
           >
-          <Droppable droppableId="right-list" direction='horizontal'>
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                style={{
-                  background: 'green',
-                  height: 'fit-content',
-                  minHeight: '40px',
-                  minWidth: '40px',
-                  padding: 10,
-                  display: 'flex',
-                  gap: '10px'
-                }}
-                {...provided.droppableProps}
-              >
-                {rightFields.map((field, index) => (
-                  <Draggable key={field.field} draggableId={field.field} index={index}>
-                    {(provided) => (
-                      <div
+            {rightFieldGroups.map((group, groupIndex) => (
+              <Droppable key={`group-${groupIndex}`} droppableId={`group-${groupIndex}`} direction='horizontal'>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={{
+                      background: 'green',
+                      height: 'fit-content',
+                      minHeight: '40px',
+                      minWidth: '40px',
+                      padding: 10,
+                      display: 'flex',
+                      gap: '10px'
+                    }}
+                    {...provided.droppableProps}
+                  >
+                    {group.map((field, index) => (
+                      <Draggable key={field.field} draggableId={field.field} index={index}>
+                        {(provided) => (
+                          <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         style={{
-                          minWidth: '150px',
-                          textAlign: "center",
+                          display: 'flex',
+                          flex: '1',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          textAlign: 'center',
                           padding: '10px',
                           backgroundColor: 'white',
                           ...provided.draggableProps.style,
@@ -128,17 +160,27 @@ function App() {
                       >
                         {field.title}
                       </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+            <button onClick={addNewFieldGroup}>Pridať skupinu</button>
           </div>
-          
+          <div 
+          style={{
+            backgroundColor: "yellow",
+            width: "20%",
+            minHeight: "calc(100vh - 20px)",
+          }}>
+            
+          </div>
         </div>
       </DragDropContext>
+      
     </div>
   );
 }
