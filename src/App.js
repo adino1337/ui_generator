@@ -44,19 +44,15 @@ function App() {
       if (sourceList === 'left-list') {
         setLeftFields([...sourceFields]);
       } else {
-        const updatedGroups = [...rightFieldGroups];
+        let updatedGroups = [...rightFieldGroups];
         const sourceGroupIndex = parseInt(sourceList.split('-')[1]);
         const destinationGroupIndex = parseInt(destinationList.split('-')[1]);
         updatedGroups[sourceGroupIndex] = sourceFields;
         updatedGroups[destinationGroupIndex] = destinationFields;
+        updatedGroups = updatedGroups.filter(group => group.length > 0);
         setRightFieldGroups(updatedGroups);
       }
-    }
-    if(sourceList !== 'left-list') {
-    const updatedGroups = rightFieldGroups.filter(group => group.length > 0);
-    setRightFieldGroups(updatedGroups);
-    }
-    
+    }    
   };
   
   if (rightFieldGroups.length === 0) {
