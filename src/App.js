@@ -8,6 +8,8 @@ function App() {
 
   const [leftFields, setLeftFields] = useState(initialFields);
   const [rightFieldGroups, setRightFieldGroups] = useState([[]]);
+  const [marks, setMarks] = useState([[]])
+  const [activeMark, setActiveMark] = useState(0)
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -65,6 +67,18 @@ function App() {
   const addNewFieldGroup = () => {
     const newFieldGroup = [];
     setRightFieldGroups([...rightFieldGroups, newFieldGroup]);
+  };
+
+  const deleteMark = (index) => {
+    if(marks.length !== 1){
+    const updatedMarks = [...marks];
+    updatedMarks.splice(index, 1);
+    setMarks(updatedMarks);
+
+    if (index === activeMark) {
+      setActiveMark(0); 
+    }
+  }
   };
 
   return (
@@ -168,15 +182,61 @@ function App() {
                 )}
               </Droppable>
             ))}
-            <button onClick={addNewFieldGroup}>Pridať skupinu</button>
+            <button onClick={addNewFieldGroup}>Pridať riadok</button>
           </div>
           <div 
           style={{
             backgroundColor: "yellow",
             width: "20%",
             minHeight: "calc(100vh - 20px)",
-          }}>
             
+          }}>
+            {marks.map((mark,i) => {
+              let active = activeMark===i ? "bold" : "normal";
+              let border = activeMark===i ? "3px solid black" : "1px solid black";
+              return(
+                <div                 
+                  style={{
+                    textAlign: "center",
+                    borderBottom: border,
+                    width: "60%",
+                    margin: "auto",
+                    display:"flex",
+                    justifyContent: "space-between",
+                    padding: "0 10px"
+                  }}  
+                >
+                  <h3
+                    style={{
+                      cursor: "pointer",  
+                      fontWeight: active,
+                      margin: "20px 0 5px 0"
+                    }}
+                    onClick={() => setActiveMark(i)}
+                  >Záložka {i+1}</h3>
+                  <h3
+                  style={{
+                    cursor: "pointer",  
+                    fontWeight: active,
+                    margin: "20px 0 5px 0"
+                  }}
+                  onClick={() => deleteMark(i)}
+                  >
+                    X
+                  </h3>
+                </div>
+              )
+            })}
+            <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "30px"
+            }}>
+            <button onClick={() => setMarks(prevMarks => [...prevMarks, []])}>
+              Pridať záložku
+            </button>
+            </div>
           </div>
         </div>
       </DragDropContext>
