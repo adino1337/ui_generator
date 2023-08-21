@@ -16,20 +16,42 @@ function App() {
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups; 
     setMarks(updatedMarks); 
-  }, [rightFieldGroups]);
+ }, [rightFieldGroups]);
+
+ const [dragEnd, setDragEnd] = useState(false);
+
+ useEffect(() => {
+  setRightFieldGroups(prev => {
+    return prev.map(row => {
+      return row.filter(col => col.length !== 0)
+    })
+  })  
+  setRightFieldGroups(prev => {
+    return prev.filter(row => row.length !== 0)
+  })
+}, [dragEnd]);
 
   const onDragEnd = (result) => {
-    
+
+    setDragEnd(prev => !prev)
     const sourceList = result.source.droppableId;
 
     if (sourceList === "left-list" && !result.destination){
       const [movedField] = leftFields.splice(result.source.index, 1);
       setRightFieldGroups(prev=>[...prev, [[movedField]]])
       return 
-    }else {
-      if(!result.destination)
+    }
+    else if (sourceList.split("-")[0] === "column" && !result.destination){      
+      let rowNumber = sourceList.split("-")[1]
+      let columnNumber = sourceList.split("-")[2]
+      const sourceFields = rightFieldGroups[rowNumber][columnNumber]
+      const [movedField] = sourceFields.splice(result.source.index, 1);
+      setRightFieldGroups(prev=>[...prev, [[movedField]]])
+      return
+    }    
+    else if(!result.destination)      
         return;
-      }
+      
 
       const destinationList = result.destination.droppableId;
 
@@ -67,8 +89,9 @@ function App() {
         setLeftFields([...sourceFields]);
       }
       
-    } else if(destinationList !== "left-list") 
-      {
+    } 
+    else if(destinationList !== "left-list") 
+    {
       // Presun z ľavého zoznamu do pravého
       if (sourceList === 'left-list') {        
         const [movedField] = leftFields.splice(result.source.index, 1);
@@ -105,25 +128,58 @@ function App() {
             })
           })
         }
-      } else {
-        console.log("medziii")
+      } 
+      else 
+      {        
+        let sourceRowNumber = parseInt(sourceList.split("-")[1])
+        let sourceColumnNumber = parseInt(sourceList.split("-")[2])
+        const sourceFields = rightFieldGroups[sourceRowNumber][sourceColumnNumber]
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        if(destinationList.split("-")[0] === "group"){
+          let destinationRowNumber= parseInt(destinationList.split("-")[1])
+          setRightFieldGroups( prev => {
+            return prev.map((row, i) => {
+              if(i === destinationRowNumber)
+                return [...row, [movedField]]
+              else
+                return row
+            })
+          })
+        }
+        else if(destinationList.split("-")[0] === "column"){
+          let destinationRowNumber= parseInt(destinationList.split("-")[1])
+          let destinationColNumber= parseInt(destinationList.split("-")[2])
+          setRightFieldGroups(prev => {
+            return prev.map((row, rowIndex) => {
+              if(rowIndex === destinationRowNumber)
+              {
+                return row.map((column, columnIndex) =>{
+                  if(columnIndex === destinationColNumber)
+                    return [...column, movedField]
+                  else
+                    return column
+                })
+              }
+              else{
+                return row
+              }
+            })
+          })
+        }
       }
-    }else if(destinationList === "left-list"){
-      console.log("left-list")
     }
-
+    else if(sourceList !== "left-list" && destinationList === "left-list"){
+      let rowNumber = sourceList.split("-")[1]
+      let columnNumber = sourceList.split("-")[2]
+      const sourceFields = rightFieldGroups[rowNumber][columnNumber]
+      const [movedField] = sourceFields.splice(result.source.index, 1);
+      leftFields.splice(result.destination.index, 0, movedField);
+          
+    }
   };
   
   
   
-  
-  
-  
-
-  const addNewFieldGroup = () => {
-    const newFieldGroup = [];
-    setRightFieldGroups([...rightFieldGroups, newFieldGroup]);
-  };
 
   const deleteMark = (index) => {
     if(marks.length !== 1){
