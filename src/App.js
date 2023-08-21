@@ -7,62 +7,118 @@ function App() {
   const initialFields = schema
 
   const [leftFields, setLeftFields] = useState(initialFields);
-  const [marks, setMarks] = useState([[[]]])
+  const [marks, setMarks] = useState([[]])
   const [activeMark, setActiveMark] = useState(0)
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
-  
-  const update = () => {
+ 
+
+  useEffect(() => {
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups; 
-    setMarks(updatedMarks);     
-  }
+    setMarks(updatedMarks); 
+  }, [rightFieldGroups]);
+
   const onDragEnd = (result) => {
-    update()
-    if (!result.destination) return;
-  
+    
     const sourceList = result.source.droppableId;
-    const destinationList = result.destination.droppableId;
-  
+
+    if (sourceList === "left-list" && !result.destination){
+      const [movedField] = leftFields.splice(result.source.index, 1);
+      setRightFieldGroups(prev=>[...prev, [[movedField]]])
+      return 
+    }else {
+      if(!result.destination)
+        return;
+      }
+
+      const destinationList = result.destination.droppableId;
+
     if (sourceList === destinationList) {
-      if (sourceList === 'left-list') {
-        const updatedFields = Array.from(leftFields);
-        const [movedField] = updatedFields.splice(result.source.index, 1);
-        updatedFields.splice(result.destination.index, 0, movedField);
-        setLeftFields(updatedFields);
-      } else {
-        const updatedGroups = [...rightFieldGroups];
-        const groupIndex = parseInt(sourceList.split('-')[1]);
-        const updatedGroup = [...updatedGroups[groupIndex]];
-        const [movedField] = updatedGroup.splice(result.source.index, 1);
-        updatedGroup.splice(result.destination.index, 0, movedField);
-        updatedGroups[groupIndex] = updatedGroup;
-        setRightFieldGroups(updatedGroups);
+      if(sourceList.split("-")[0] === "column")
+      {
+        let rowNumber = sourceList.split("-")[1]
+        let columnNumber = sourceList.split("-")[2]
+        console.log(`Presun vo column ${rowNumber} ${columnNumber}`)
+        const sourceFields = rightFieldGroups[rowNumber][columnNumber]
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        sourceFields.splice(result.destination.index, 0, movedField);
+        setRightFieldGroups(prev => {
+          return prev.map((row, rowIndex) => {
+            if(rowIndex === rowNumber)
+            {
+              return row.map((column, columnIndex) =>{
+                if(columnIndex === columnNumber)
+                  return sourceFields
+                else
+                  return column
+              })
+            }
+            else{
+              return row
+            }
+          })
+        })
+                
       }
-    } else {
-      const sourceFields = sourceList === 'left-list' ? leftFields : rightFieldGroups[parseInt(sourceList.split('-')[1])];
-      const destinationFields = destinationList === 'left-list' ? leftFields : rightFieldGroups[parseInt(destinationList.split('-')[1])];
-  
-      const [movedField] = sourceFields.splice(result.source.index, 1);
-      destinationFields.splice(result.destination.index, 0, movedField);
-  
-      if (sourceList === 'left-list') {
+      else if(sourceList === "left-list") {
+        const sourceFields = leftFields;
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        sourceFields.splice(result.destination.index, 0, movedField);
         setLeftFields([...sourceFields]);
-      } else {
-        let updatedGroups = [...rightFieldGroups];
-        const sourceGroupIndex = parseInt(sourceList.split('-')[1]);
-        const destinationGroupIndex = parseInt(destinationList.split('-')[1]);
-        updatedGroups[sourceGroupIndex] = sourceFields;
-        updatedGroups[destinationGroupIndex] = destinationFields;
-        updatedGroups = updatedGroups.filter(group => group.length > 0);
-        setRightFieldGroups(updatedGroups);
       }
-    }    
+      
+    } else if(destinationList !== "left-list") 
+      {
+      // Presun z ľavého zoznamu do pravého
+      if (sourceList === 'left-list') {        
+        const [movedField] = leftFields.splice(result.source.index, 1);
+        if(destinationList.split("-")[0] === 'group') {
+          let rowNumber= parseInt(destinationList.split("-")[1])
+          //pridá array do arraya podľa groupnumber v rightFieldGroups   
+          setRightFieldGroups( prev => {
+            return prev.map((row, i) => {
+              if(i === rowNumber)
+                return [...row, [movedField]]
+              else
+                return row
+            })
+          })  
+               
+        }
+        else if(destinationList.split("-")[0] === 'column'){
+          const rowNumber = parseInt(destinationList.split("-")[1])
+          const columnNumber = parseInt(destinationList.split("-")[2])
+          setRightFieldGroups(prev => {
+            return prev.map((row, rowIndex) => {
+              if(rowIndex === rowNumber)
+              {
+                return row.map((column, columnIndex) =>{
+                  if(columnIndex === columnNumber)
+                    return [...column, movedField]
+                  else
+                    return column
+                })
+              }
+              else{
+                return row
+              }
+            })
+          })
+        }
+      } else {
+        console.log("medziii")
+      }
+    }else if(destinationList === "left-list"){
+      console.log("left-list")
+    }
+
   };
   
-  if (rightFieldGroups.length === 0) {
-    const updatedGroups = [[]]; 
-    setRightFieldGroups(updatedGroups);
-  }
+  
+  
+  
+  
+  
 
   const addNewFieldGroup = () => {
     const newFieldGroup = [];
@@ -115,16 +171,19 @@ function App() {
   const generate = () => {
     const fieldData = marks.map((mark) =>
       mark.map((group) =>
-        group.map((field) => [
-          {
-            field: field.field
-          }
-        ])
+        group.map((row) =>
+          row.map((col) =>
+            (
+              {
+                field: col.field
+              }
+            )
+          )          
+        )
       )
     );
   
     const jsonData = JSON.stringify(fieldData, null, 2);
-  
     // Vytvořte Blob objekt z JSON dat
     const blob = new Blob([jsonData], { type: "application/json" });
   
@@ -201,9 +260,9 @@ function App() {
               gap: '10px'
             }}
           >
-            {rightFieldGroups.map((group, groupIndex) => (
-              <Droppable key={`group-${groupIndex}`} droppableId={`group-${groupIndex}`} direction='horizontal'>
-                {(provided, snapshot) => (
+            {rightFieldGroups.map((row, rowIndex) => (
+              <Droppable key={`group-${rowIndex}`} droppableId={`group-${rowIndex}`} direction='horizontal'>
+                {(provided) => (
                   <div
                     ref={provided.innerRef}
                     style={{
@@ -217,8 +276,26 @@ function App() {
                     }}
                     {...provided.droppableProps}
                   >
-                    {group.map((field, index) => (
-                      <Draggable key={field.field} draggableId={field.field} index={index}>
+                    {row.map((column, columnIndex) => (
+                      <Droppable key={`column-${rowIndex}-${columnIndex}`} droppableId={`column-${rowIndex}-${columnIndex}`} direction='vertical'>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={{
+                      background: 'pink',
+                      minHeight: '40px',
+                      minWidth: '40px',
+                      
+                      display: 'flex',
+                      flex: '1',
+                      flexDirection: 'column',  
+                      padding: 10,
+                      gap: '10px'
+                    }}
+                    {...provided.droppableProps}
+                  >
+                      {column.map((field, fieldIndex) => (
+                        <Draggable key={field.field} draggableId={field.field} index={fieldIndex}>
                         {(provided) => (
                           <div
                         ref={provided.innerRef}
@@ -235,17 +312,24 @@ function App() {
                           ...provided.draggableProps.style,
                         }}
                       >
+                        
                         {field.title}
                       </div>
                         )}
                       </Draggable>
+                      ))}
+                      
+                      {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+
                     ))}
                     {provided.placeholder}
                   </div>
                 )}
               </Droppable>
             ))}
-            <button onClick={addNewFieldGroup}>Pridať riadok</button>
           </div>
           <div 
           style={{
