@@ -319,7 +319,10 @@ function App() {
             )}
             
           </Droppable>
+          
+          
           <div 
+
             style={{
               width: '60%',
               minHeight: "calc(100vh - 20px)",
@@ -331,6 +334,7 @@ function App() {
             }}
           >
             {rightFieldGroups.map((row, rowIndex) => (
+
               <Droppable key={`group-${rowIndex}`} droppableId={`group-${rowIndex}`} direction='horizontal'>
                 {(providedRow, snapshot) => (
                   <div
@@ -346,6 +350,22 @@ function App() {
                   >
                     
                     {row.map((column, columnIndex) => (
+
+<Draggable key={`column-${rowIndex}-${columnIndex}-grab`} draggableId={`column-${rowIndex}-${columnIndex}-grab`} index={columnIndex}>
+{(providedField, snapshot) => (
+  <div
+ref={providedField.innerRef}
+{...providedField.draggableProps}
+{...providedField.dragHandleProps}
+style={{
+  
+  padding: '10px',
+  backgroundColor: "cyan",
+  height:  "100%",
+  ...providedField.draggableProps.style,
+}}
+>
+
                       <Droppable key={`column-${rowIndex}-${columnIndex}`} droppableId={`column-${rowIndex}-${columnIndex}`} direction='vertical'>
                 {(providedCol, snapshot) => {
                 let styles = {
@@ -354,7 +374,6 @@ function App() {
                   display: 'flex',
                   flex: "1",
                   flexDirection: 'column',  
-                  padding: 10,
                   gap: '10px'
                 }
                 styles = edit ? {...styles, maxWidth: "200px", minWidth: "0"} : {...styles, minWidth: "0"}
@@ -394,7 +413,13 @@ function App() {
                 )}}
               </Droppable>
 
-                    ))}
+</div>
+)}
+</Draggable>          
+
+  )
+                    
+                    )}
                     
                     {
             dragStart
@@ -430,6 +455,8 @@ function App() {
             </div>
             }
           </div>
+            
+            
           <div 
           style={{
             backgroundColor: "yellow",
