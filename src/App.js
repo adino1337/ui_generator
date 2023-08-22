@@ -272,13 +272,13 @@ function App() {
   return (
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setDragStart(true)}>
-        <div style={{ display: 'flex', width: '100%', height: "100vh", overflow: "hidden"}}>
+        <div style={{ display: 'flex', width: '100%', minHeight: "100vh", overflow: "hidden"}}>
           <Droppable droppableId="left-list">
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 style={{
-                  minHeight: "calc(100vh - 20px)",
+                  height: "calc(100vh - 20px)",
                   width: '20%',
                   overflowY: "scroll",
                   background: 'blue',
@@ -287,7 +287,7 @@ function App() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-
+                  
                 }}
                 {...provided.droppableProps}
               >
@@ -323,7 +323,6 @@ function App() {
             style={{
               width: '60%',
               minHeight: "calc(100vh - 20px)",
-              height: "calc(100vh - 20px)",
               background: 'red',
               padding: 10,
               display: 'flex',
@@ -436,7 +435,6 @@ function App() {
             backgroundColor: "yellow",
             width: "20%",
             minHeight: "100vh",
-            height: "100vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
