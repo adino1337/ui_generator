@@ -348,19 +348,22 @@ function App() {
                     
                     {row.map((column, columnIndex) => (
                       <Droppable key={`column-${rowIndex}-${columnIndex}`} droppableId={`column-${rowIndex}-${columnIndex}`} direction='vertical'>
-                {(providedCol, snapshot) => (
+                {(providedCol, snapshot) => {
+                let styles = {
+                  background: snapshot.isDraggingOver ? 'pink' : 'purple',
+                  minHeight: '40px',
+                  display: 'flex',
+                  flex: "1",
+                  flexDirection: 'column',  
+                  padding: 10,
+                  gap: '10px'
+                }
+                styles = edit ? {...styles, maxWidth: "200px", minWidth: "0"} : {...styles, minWidth: "0"}
+                
+                  return (                  
                   <div
                     ref={providedCol.innerRef}
-                    style={{
-                      background: snapshot.isDraggingOver ? 'pink' : 'purple',
-                      minHeight: '40px',
-                      minWidth: '200px',
-                      display: 'flex',
-                      flex: edit ? "0" : "1",
-                      flexDirection: 'column',  
-                      padding: 10,
-                      gap: '10px'
-                    }}
+                    style={styles}
                     {...providedCol.droppableProps}
                   >
                     
@@ -382,7 +385,6 @@ function App() {
                           ...providedField.draggableProps.style,
                         }}
                       >
-                        
                         {field.title}
                       </div>
                         )}
@@ -390,7 +392,7 @@ function App() {
                       ))}
                     {providedCol.placeholder}
                   </div>
-                )}
+                )}}
               </Droppable>
 
                     ))}
@@ -423,8 +425,7 @@ function App() {
             dragStart
             &&
             <div
-              className='test'
-              
+              className='test'              
             >
               <h1 style={{margin: "0"}}>+</h1>
             </div>
