@@ -10,7 +10,8 @@ function App() {
   const [marks, setMarks] = useState([[]])
   const [activeMark, setActiveMark] = useState(0)
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
- 
+  const [dragStart, setDragStart] = useState(false)
+  const [edit, setEdit] = useState(true)
 
   useEffect(() => {
     const updatedMarks = [...marks];
@@ -32,7 +33,7 @@ function App() {
 }, [dragEnd]);
 
   const onDragEnd = (result) => {
-
+    setDragStart(false)
     setDragEnd(prev => !prev)
     const sourceList = result.source.droppableId;
 
@@ -111,13 +112,18 @@ function App() {
         else if(destinationList.split("-")[0] === 'column'){
           const rowNumber = parseInt(destinationList.split("-")[1])
           const columnNumber = parseInt(destinationList.split("-")[2])
+          let destinationIndex = parseInt(result.destination.index)
+
           setRightFieldGroups(prev => {
             return prev.map((row, rowIndex) => {
               if(rowIndex === rowNumber)
               {
                 return row.map((column, columnIndex) =>{
-                  if(columnIndex === columnNumber)
-                    return [...column, movedField]
+                  if(columnIndex === columnNumber){
+                    let updatedColumn = [...column];
+                    updatedColumn.splice(destinationIndex, 0, movedField);
+                    return updatedColumn;
+                  }
                   else
                     return column
                 })
@@ -149,13 +155,17 @@ function App() {
         else if(destinationList.split("-")[0] === "column"){
           let destinationRowNumber= parseInt(destinationList.split("-")[1])
           let destinationColNumber= parseInt(destinationList.split("-")[2])
+          let destinationIndex = parseInt(result.destination.index)
           setRightFieldGroups(prev => {
             return prev.map((row, rowIndex) => {
               if(rowIndex === destinationRowNumber)
               {
                 return row.map((column, columnIndex) =>{
-                  if(columnIndex === destinationColNumber)
-                    return [...column, movedField]
+                  if(columnIndex === destinationColNumber){
+                    let updatedColumn = [...column];
+                    updatedColumn.splice(destinationIndex, 0, movedField);
+                    return updatedColumn;
+                  }
                   else
                     return column
                 })
@@ -261,8 +271,8 @@ function App() {
 
   return (
     <div className="App">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div style={{ display: 'flex', width: '100%', minHeight: "calc(100vh - 20px)"}}>
+      <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setDragStart(true)}>
+        <div style={{ display: 'flex', width: '100%', height: "100vh", overflow: "hidden"}}>
           <Droppable droppableId="left-list">
             {(provided, snapshot) => (
               <div
@@ -270,13 +280,13 @@ function App() {
                 style={{
                   minHeight: "calc(100vh - 20px)",
                   width: '20%',
-                  height: 'calc(100vh - 20px)',
                   overflowY: "scroll",
                   background: 'blue',
                   padding: 10,
                   gap: "10px",
                   display: "flex",
-                  flexDirection: "column"
+                  flexDirection: "column",
+                  alignItems: "center",
 
                 }}
                 {...provided.droppableProps}
@@ -289,8 +299,12 @@ function App() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          textAlign: 'center',
                           padding: '10px',
-                          width: "calc(100% - 20px)",
+                          width: '200px',
                           backgroundColor: 'white',
                           ...provided.draggableProps.style,
                         }}
@@ -309,63 +323,63 @@ function App() {
             style={{
               width: '60%',
               minHeight: "calc(100vh - 20px)",
+              height: "calc(100vh - 20px)",
               background: 'red',
               padding: 10,
               display: 'flex',
               flexDirection: "column",
-              gap: '10px'
+              gap: "10px"
             }}
           >
             {rightFieldGroups.map((row, rowIndex) => (
               <Droppable key={`group-${rowIndex}`} droppableId={`group-${rowIndex}`} direction='horizontal'>
-                {(provided) => (
+                {(providedRow, snapshot) => (
                   <div
-                    ref={provided.innerRef}
+                    ref={providedRow.innerRef}
                     style={{
-                      background: 'green',
+                      background: 'grey',
                       height: 'fit-content',
                       minHeight: '40px',
-                      minWidth: '40px',
-                      padding: 10,
+                      minWidth: '200px',
                       display: 'flex',
-                      gap: '10px'
                     }}
-                    {...provided.droppableProps}
+                    {...providedRow.droppableProps}
                   >
+                    
                     {row.map((column, columnIndex) => (
                       <Droppable key={`column-${rowIndex}-${columnIndex}`} droppableId={`column-${rowIndex}-${columnIndex}`} direction='vertical'>
-                {(provided) => (
+                {(providedCol, snapshot) => (
                   <div
-                    ref={provided.innerRef}
+                    ref={providedCol.innerRef}
                     style={{
-                      background: 'pink',
+                      background: snapshot.isDraggingOver ? 'pink' : 'purple',
                       minHeight: '40px',
-                      minWidth: '40px',
-                      
+                      minWidth: '200px',
                       display: 'flex',
-                      flex: '1',
+                      flex: edit ? "0" : "1",
                       flexDirection: 'column',  
                       padding: 10,
                       gap: '10px'
                     }}
-                    {...provided.droppableProps}
+                    {...providedCol.droppableProps}
                   >
+                    
                       {column.map((field, fieldIndex) => (
                         <Draggable key={field.field} draggableId={field.field} index={fieldIndex}>
-                        {(provided) => (
+                        {(providedField, snapshot) => (
                           <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
+                        ref={providedField.innerRef}
+                        {...providedField.draggableProps}
+                        {...providedField.dragHandleProps}
                         style={{
                           display: 'flex',
-                          flex: '1',
                           justifyContent: 'center',
                           alignItems: 'center',
                           textAlign: 'center',
                           padding: '10px',
-                          backgroundColor: 'white',
-                          ...provided.draggableProps.style,
+                          backgroundColor: "white",
+                          height:  "100%",
+                          ...providedField.draggableProps.style,
                         }}
                       >
                         
@@ -374,24 +388,54 @@ function App() {
                         )}
                       </Draggable>
                       ))}
-                      
-                      {provided.placeholder}
+                    {providedCol.placeholder}
                   </div>
                 )}
               </Droppable>
 
                     ))}
-                    {provided.placeholder}
+                    
+                    {
+            dragStart
+            &&
+            <div
+              style={{
+                border: '2px solid black',
+                minHeight: '40px',
+                maxWidth: '200px',
+                flex: 1,
+                padding: 10,
+                display: 'grid',
+                placeItems: 'center',       
+                color: "black",
+                backgroundColor: snapshot.isDraggingOver ? 'blue' : "grey"             
+              }}
+            >
+              <h1 style={{margin: "0"}}>+</h1>
+            </div>}
                   </div>
+                  
                 )}
               </Droppable>
+              
             ))}
+            {
+            dragStart
+            &&
+            <div
+              className='test'
+              
+            >
+              <h1 style={{margin: "0"}}>+</h1>
+            </div>
+            }
           </div>
           <div 
           style={{
             backgroundColor: "yellow",
             width: "20%",
-            minHeight: "calc(100vh - 20px)",
+            minHeight: "100vh",
+            height: "100vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -459,6 +503,13 @@ function App() {
               }}
             >
               GENEROVAŤ
+            </button>
+            <button onClick={() => setEdit(prev => !prev)}
+              style={{
+                margin: "0 0 20px 0"
+              }}
+            >
+              Nahliadnuť export
             </button>
           </div>
           </div>

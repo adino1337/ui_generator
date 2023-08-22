@@ -1,3 +1,17 @@
 .App{
   height: 100vh;
 }
+.test{  
+  border: 2px solid black;
+  min-height: 60px;
+  min-width: 200px;
+  padding: 10;
+  display: grid;
+  place-items: center;
+  color: black;  
+}
+
+.test:hover{
+  background-color: black;
+  color: white;
+}
