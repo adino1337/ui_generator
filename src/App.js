@@ -11,6 +11,7 @@ function App() {
   const [activeMark, setActiveMark] = useState(0);
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
   const [edit, setEdit] = useState(false);
+  const [type, setType] = useState("field")
   useEffect(() => {
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
@@ -129,16 +130,11 @@ function App() {
           destinationList.split("-")[0] === "group"
         ) {
           let sourceRowNumber = parseInt(sourceList.split("-")[1]);
-          const sourceFields =
-            rightFieldGroups[sourceRowNumber];
+          let destinationRowNumber = parseInt(destinationList.split("-")[1]);
+
+          const sourceFields = rightFieldGroups[sourceRowNumber];
           const [movedField] = sourceFields.splice(result.source.index, 1);
-          let destinationIndex = parseInt(result.destination.index);
-          //DOROBUT
-          setRightFieldGroups(prev => {
-            return prev.map(row => {
-              return row
-            })
-          })
+          rightFieldGroups[destinationRowNumber].splice(result.destination.index, 0, movedField)
 
         } else {
           let sourceRowNumber = parseInt(sourceList.split("-")[1]);
@@ -255,6 +251,7 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
+  
   return (
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -541,9 +538,10 @@ function App() {
                       key={`addRow`}
                       droppableId={`addRow`}
                       direction="vertical"
-                      type="field"
+                      type={type}
                     >
-                      {(provided, snapshot) => (
+                      {(provided, snapshot) => {
+                        return(
                         <div
                           ref={provided.innerRef}
                           className="plusRow"
@@ -556,7 +554,7 @@ function App() {
                         >
                           +
                         </div>
-                      )}
+                      )}}
                     </Droppable>
                   }
                   {providedBase.placeholder}
