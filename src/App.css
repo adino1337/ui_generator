@@ -17,4 +17,13 @@
   font-size: 32px;
   color: white;
   height: 70px;
+  position: relative;
+}
+.plusRowWithColumn{
+  display: grid;
+  place-items: center;
+  width: 100%;
+  font-size: 32px;
+  color: white;
+  height: 70px;
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./App.css";
-import schema from "./schemas/schema_2.json";
+import schema from "./schemas/schema_3.json";
 
 function App() {
   const initialFields = schema;
@@ -10,9 +10,10 @@ function App() {
   const [marks, setMarks] = useState([[]]);
   const [activeMark, setActiveMark] = useState(0);
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
-  const [edit, setEdit] = useState(false);
-  const [type, setType] = useState("field")
+  const [edit, setEdit] = useState(true);
+  const [type, setType] = useState("field");
   useEffect(() => {
+    console.log("udpate")
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
     setMarks(updatedMarks);
@@ -134,9 +135,19 @@ function App() {
 
           const sourceFields = rightFieldGroups[sourceRowNumber];
           const [movedField] = sourceFields.splice(result.source.index, 1);
-          rightFieldGroups[destinationRowNumber].splice(result.destination.index, 0, movedField)
-
-        } else {
+          rightFieldGroups[destinationRowNumber].splice(
+            result.destination.index,
+            0,
+            movedField
+          );
+        }else if(destinationList === "addRowWithColumn") {
+          let sourceRowNumber = parseInt(sourceList.split("-")[1]);
+          const sourceFields = rightFieldGroups[sourceRowNumber];
+          const [movedField] = sourceFields.splice(result.source.index, 1);
+          setRightFieldGroups((prev) => [...prev, [movedField]]);
+      return;
+        } 
+        else {
           let sourceRowNumber = parseInt(sourceList.split("-")[1]);
           let sourceColumnNumber = parseInt(sourceList.split("-")[2]);
           const sourceFields =
@@ -251,7 +262,6 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  
   return (
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -266,12 +276,10 @@ function App() {
           <Droppable droppableId="left-list" type="field">
             {(provided, snapshot) => (
               <div
-                onMouseEnter={() => setEdit(true)}
-                onMouseLeave={() => setEdit(false)}
                 ref={provided.innerRef}
                 style={{
                   height: "calc(100vh - 20px)",
-                  width: "20%",
+                  width: "15%",
                   overflowY: "scroll",
                   background: "blue",
                   padding: 10,
@@ -288,6 +296,7 @@ function App() {
                     draggableId={field.field}
                     index={index}
                     type="field"
+                    isDragDisabled={!edit}
                   >
                     {(provided) => (
                       <div
@@ -300,7 +309,7 @@ function App() {
                           alignItems: "center",
                           textAlign: "center",
                           padding: "10px",
-                          width: "200px",
+                          width: "80%",
                           backgroundColor: "white",
                           ...provided.draggableProps.style,
                         }}
@@ -324,10 +333,8 @@ function App() {
               return (
                 <div
                   ref={providedBase.innerRef}
-                  onMouseEnter={() => setEdit(true)}
-                  onMouseLeave={() => setEdit(false)}
                   style={{
-                    width: "60%",
+                    width: "70%",
                     minHeight: "calc(100vh - 20px)",
                     background: "red",
                     padding: 10,
@@ -343,6 +350,7 @@ function App() {
                       draggableId={`row-${rowIndex}-grab`}
                       index={rowIndex}
                       type="row"
+                      isDragDisabled={!edit}
                     >
                       {(providedField, snapshot) => (
                         <div
@@ -375,7 +383,6 @@ function App() {
                                     background: "grey",
                                     minHeight: "40px",
                                     minWidth: "200px",
-                                    height: "fit-content",
                                     flex: "1",
                                     display: "flex",
                                   }}
@@ -387,6 +394,7 @@ function App() {
                                       draggableId={`column-${rowIndex}-${columnIndex}-grab`}
                                       index={columnIndex}
                                       type="column"
+                                      isDragDisabled={!edit}
                                     >
                                       {(providedField, snapshot) => {
                                         let dragHandleProps = {
@@ -453,6 +461,7 @@ function App() {
                                                           }
                                                           index={fieldIndex}
                                                           type="field"
+                                                          isDragDisabled={!edit}
                                                         >
                                                           {(
                                                             providedField,
@@ -499,7 +508,7 @@ function App() {
                                     </Draggable>
                                   ))}
                                   {providedRow.placeholder}
-                                  {
+                                  {edit && (
                                     <Droppable
                                       key={`addColumn-${rowIndex}`}
                                       droppableId={`addColumn-${rowIndex}`}
@@ -524,7 +533,7 @@ function App() {
                                         </div>
                                       )}
                                     </Droppable>
-                                  }
+                                  )}
                                 </div>
                               );
                             }}
@@ -533,30 +542,55 @@ function App() {
                       )}
                     </Draggable>
                   ))}
-                  {
+                  {edit && (
                     <Droppable
                       key={`addRow`}
                       droppableId={`addRow`}
                       direction="vertical"
                       type={type}
                     >
+                      {(provided, snapshotUpper) => {
+                        return (
+                          <div
+                            ref={provided.innerRef}
+                            className="plusRow"
+                            style={{
+                              backgroundColor: snapshot.isDraggingOver
+                                ? "cyan"
+                                : "pink",
+                            }}
+                            {...provided.droppableProps}
+                          >
+                            <Droppable
+                      key={`addRowWithColumn`}
+                      droppableId={`addRowWithColumn`}
+                      direction="vertical"
+                      type={"column"}
+                    >
                       {(provided, snapshot) => {
-                        return(
-                        <div
-                          ref={provided.innerRef}
-                          className="plusRow"
-                          style={{
-                            backgroundColor: snapshot.isDraggingOver
-                              ? "cyan"
-                              : "pink",
-                          }}
-                          {...provided.droppableProps}
-                        >
-                          +
-                        </div>
-                      )}}
+                        let backgroundColor = "pink"
+                        if(snapshotUpper.isDraggingOver || snapshot.isDraggingOver)
+                         backgroundColor = "magenta"
+                        return (
+                          <div
+                            ref={provided.innerRef}
+                            className="plusRowWithColumn"
+                            style={{
+                              backgroundColor: backgroundColor
+                            }}
+                            {...provided.droppableProps}
+                          >
+                            +
+                          </div>
+                        );
+                      }}
                     </Droppable>
-                  }
+                          </div>
+                        );
+                      }}
+                    </Droppable>
+                  )}
+                  
                   {providedBase.placeholder}
                 </div>
               );
@@ -565,7 +599,7 @@ function App() {
           <div
             style={{
               backgroundColor: "yellow",
-              width: "20%",
+              width: "15%",
               minHeight: "100vh",
               display: "flex",
               flexDirection: "column",
