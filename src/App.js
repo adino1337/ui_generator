@@ -341,9 +341,9 @@ function App() {
                     ref={providedRow.innerRef}
                     style={{
                       background: 'grey',
-                      height: 'fit-content',
                       minHeight: '40px',
                       minWidth: '200px',
+                      height: "fit-content",
                       display: 'flex',
                     }}
                     {...providedRow.droppableProps}
@@ -358,10 +358,11 @@ ref={providedField.innerRef}
 {...providedField.draggableProps}
 {...providedField.dragHandleProps}
 style={{
-  
-  padding: '10px',
-  backgroundColor: "cyan",
-  height:  "100%",
+  maxWidth: '200px',
+  display: 'flex',
+  flex: "1",
+  padding: '20px',
+  backgroundColor: "cyan",  
   ...providedField.draggableProps.style,
 }}
 >
@@ -445,15 +446,7 @@ style={{
               </Droppable>
               
             ))}
-            {
-            dragStart
-            &&
-            <div
-              className='test'              
-            >
-              <h1 style={{margin: "0"}}>+</h1>
-            </div>
-            }
+            
           </div>
             
             
