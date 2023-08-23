@@ -1,17 +1,20 @@
 .App{
   height: 100vh;
 }
-.test{  
-  border: 2px solid black;
-  min-height: 60px;
-  min-width: 200px;
-  padding: 10;
+
+
+.plusCol{
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  color: white;
+}
+.plusRow{
   display: grid;
   place-items: center;
-  color: black;  
-}
-
-.test:hover{
-  background-color: black;
+  font-size: 32px;
   color: white;
+  height: 70px;
 }
