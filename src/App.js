@@ -78,10 +78,17 @@ function App() {
         const [movedField] = sourceFields.splice(result.source.index, 1);
         sourceFields.splice(result.destination.index, 0, movedField);
         setLeftFields([...sourceFields]);
-      }else if (sourceList.split("-")[0] === "group") {
-        console.log("columi vedla seba")
+      } else if (sourceList.split("-")[0] === "group") {
+        let rowNumber = sourceList.split("-")[1];
+        console.log(`Presun medzi column`);
+        const sourceFields = rightFieldGroups[rowNumber];
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        sourceFields.splice(result.destination.index, 0, movedField);
+      } else if (sourceList === "base") {
+        const sourceFields = rightFieldGroups;
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        sourceFields.splice(result.destination.index, 0, movedField);
       }
-
     } else if (destinationList !== "left-list") {
       // Presun z ľavého zoznamu do pravého
       if (sourceList === "left-list") {
@@ -117,38 +124,56 @@ function App() {
           });
         }
       } else {
-        let sourceRowNumber = parseInt(sourceList.split("-")[1]);
-        let sourceColumnNumber = parseInt(sourceList.split("-")[2]);
-        const sourceFields =
-          rightFieldGroups[sourceRowNumber][sourceColumnNumber];
-        const [movedField] = sourceFields.splice(result.source.index, 1);
-        if (destinationList.split("-")[0] === "addColumn") {
-          let destinationRowNumber = parseInt(destinationList.split("-")[1]);
-          setRightFieldGroups((prev) => {
-            return prev.map((row, i) => {
-              if (i === destinationRowNumber) return [...row, [movedField]];
-              else return row;
-            });
-          });
-        } else if (destinationList.split("-")[0] === "column") {
-          let destinationRowNumber = parseInt(destinationList.split("-")[1]);
-          let destinationColNumber = parseInt(destinationList.split("-")[2]);
+        if (
+          sourceList.split("-")[0] === "group" &&
+          destinationList.split("-")[0] === "group"
+        ) {
+          let sourceRowNumber = parseInt(sourceList.split("-")[1]);
+          const sourceFields =
+            rightFieldGroups[sourceRowNumber];
+          const [movedField] = sourceFields.splice(result.source.index, 1);
           let destinationIndex = parseInt(result.destination.index);
-          setRightFieldGroups((prev) => {
-            return prev.map((row, rowIndex) => {
-              if (rowIndex === destinationRowNumber) {
-                return row.map((column, columnIndex) => {
-                  if (columnIndex === destinationColNumber) {
-                    let updatedColumn = [...column];
-                    updatedColumn.splice(destinationIndex, 0, movedField);
-                    return updatedColumn;
-                  } else return column;
-                });
-              } else {
-                return row;
-              }
+          //DOROBUT
+          setRightFieldGroups(prev => {
+            return prev.map(row => {
+              return row
+            })
+          })
+
+        } else {
+          let sourceRowNumber = parseInt(sourceList.split("-")[1]);
+          let sourceColumnNumber = parseInt(sourceList.split("-")[2]);
+          const sourceFields =
+            rightFieldGroups[sourceRowNumber][sourceColumnNumber];
+          const [movedField] = sourceFields.splice(result.source.index, 1);
+          if (destinationList.split("-")[0] === "addColumn") {
+            let destinationRowNumber = parseInt(destinationList.split("-")[1]);
+            setRightFieldGroups((prev) => {
+              return prev.map((row, i) => {
+                if (i === destinationRowNumber) return [...row, [movedField]];
+                else return row;
+              });
             });
-          });
+          } else if (destinationList.split("-")[0] === "column") {
+            let destinationRowNumber = parseInt(destinationList.split("-")[1]);
+            let destinationColNumber = parseInt(destinationList.split("-")[2]);
+            let destinationIndex = parseInt(result.destination.index);
+            setRightFieldGroups((prev) => {
+              return prev.map((row, rowIndex) => {
+                if (rowIndex === destinationRowNumber) {
+                  return row.map((column, columnIndex) => {
+                    if (columnIndex === destinationColNumber) {
+                      let updatedColumn = [...column];
+                      updatedColumn.splice(destinationIndex, 0, movedField);
+                      return updatedColumn;
+                    } else return column;
+                  });
+                } else {
+                  return row;
+                }
+              });
+            });
+          }
         }
       }
     } else if (sourceList !== "left-list" && destinationList === "left-list") {
