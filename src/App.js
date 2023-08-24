@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./App.css";
 import schema from "./schemas/schema_3.json";
-
+import Sidebar from "./components/Sidebar";
 function App() {
   const initialFields = schema;
 
@@ -13,7 +13,6 @@ function App() {
   const [edit, setEdit] = useState(true);
   const [type, setType] = useState("field");
   const [titleText, setTitleText] = useState("");
-  const [sidePanel, setSidePanel] = useState(true)
   useEffect(() => {
     console.log("udpate");
     const updatedMarks = [...marks];
@@ -277,21 +276,9 @@ function App() {
   return (
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="app">
-        <div
-        className="side-panel"
-            style={{
-              width: sidePanel ? "15%" : "75px",
-            }}
-          >
-            {
-              sidePanel ?
-            <>              
+        <Sidebar>
             <div>
-            <h1
-               className="close-panel-icon"
-              onClick={()=>setSidePanel(false)}
-            >{'<'}
-              </h1> 
+             
               {marks.map((mark, i) => {
                 let active = activeMark === i ? "bold" : "normal";
                 let border =
@@ -371,14 +358,8 @@ function App() {
                 Nahliadnuť export
               </button>
             </div>
-            </>   
-            :
-            <h1
-                className="open-panel-icon"
-              onClick={()=>setSidePanel(true)}
-            >{'>'}</h1> 
-            }
-          </div>
+               
+        </Sidebar>
 
           <Droppable droppableId="left-list" type="field">
             {(provided, snapshot) => (
