@@ -12,8 +12,9 @@ function App() {
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
   const [edit, setEdit] = useState(true);
   const [type, setType] = useState("field");
+  const [titleText, setTitleText] = useState("");
   useEffect(() => {
-    console.log("udpate")
+    console.log("udpate");
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
     setMarks(updatedMarks);
@@ -140,14 +141,13 @@ function App() {
             0,
             movedField
           );
-        }else if(destinationList === "addRowWithColumn") {
+        } else if (destinationList === "addRowWithColumn") {
           let sourceRowNumber = parseInt(sourceList.split("-")[1]);
           const sourceFields = rightFieldGroups[sourceRowNumber];
           const [movedField] = sourceFields.splice(result.source.index, 1);
           setRightFieldGroups((prev) => [...prev, [movedField]]);
-      return;
-        } 
-        else {
+          return;
+        } else {
           let sourceRowNumber = parseInt(sourceList.split("-")[1]);
           let sourceColumnNumber = parseInt(sourceList.split("-")[2]);
           const sourceFields =
@@ -238,9 +238,15 @@ function App() {
     const fieldData = marks.map((mark) =>
       mark.map((group) =>
         group.map((row) =>
-          row.map((col) => ({
-            field: col.field,
-          }))
+          row.map((col) =>{ 
+            if(col.type==="title")
+              return({
+                title: col.title,
+              })
+            else
+            return({
+              field: col.field,
+          })})
         )
       )
     );
@@ -290,6 +296,27 @@ function App() {
                 }}
                 {...provided.droppableProps}
               >
+                <div>
+                  <input
+                    value={titleText}
+                    onChange={(e) => setTitleText(e.target.value)}
+                  />
+                  <button
+                    onClick={() => {
+                      setLeftFields((prev) => [
+                        {
+                          type: "title",
+                          title: "Nadpis: " + titleText,
+                          field: titleText + "-" + Date.now(),
+                        },
+                        ...prev,
+                      ]);
+                      setTitleText("");
+                    }}
+                  >
+                    Pridať Nadpis
+                  </button>
+                </div>
                 {leftFields.map((field, index) => (
                   <Draggable
                     key={field.field}
@@ -310,6 +337,8 @@ function App() {
                           textAlign: "center",
                           padding: "10px",
                           width: "80%",
+                          border:
+                            field.type === "title" ? "5px solid green" : "none",
                           backgroundColor: "white",
                           ...provided.draggableProps.style,
                         }}
@@ -352,194 +381,200 @@ function App() {
                       type="row"
                       isDragDisabled={!edit}
                     >
-                      {(providedField, snapshot) => (
-                        <div
-                          ref={providedField.innerRef}
-                          {...providedField.draggableProps}
-                          {...providedField.dragHandleProps}
-                          style={{
-                            background: "orange",
-                            minHeight: "40px",
-                            minWidth: "200px",
-                            height: "fit-content",
-                            display: "flex",
-                            padding: "20px",
-                            ...providedField.draggableProps.style,
-                          }}
-                        >
-                          <Droppable
-                            key={`group-${rowIndex}`}
-                            droppableId={`group-${rowIndex}`}
-                            direction="horizontal"
-                            type="column"
-                          >
-                            {(providedRow, snapshotRow) => {
-                              let columnMaxWidth = edit ? "none" : "120px";
-
-                              return (
-                                <div
-                                  ref={providedRow.innerRef}
-                                  style={{
-                                    background: "grey",
-                                    minHeight: "40px",
-                                    minWidth: "200px",
-                                    flex: "1",
-                                    display: "flex",
-                                  }}
-                                  {...providedRow.droppableProps}
-                                >
-                                  {row.map((column, columnIndex) => (
-                                    <Draggable
-                                      key={`column-${rowIndex}-${columnIndex}-grab`}
-                                      draggableId={`column-${rowIndex}-${columnIndex}-grab`}
-                                      index={columnIndex}
-                                      type="column"
-                                      isDragDisabled={!edit}
-                                    >
-                                      {(providedField, snapshot) => {
-                                        let dragHandleProps = {
-                                          ...providedField.dragHandleProps,
-                                        };
-                                        /*
-                                      if(columnIndex === row.length - 1)
-                                      dragHandleProps = {}
-                                     */
-                                        let styles = {
-                                          display: "flex",
-                                          flex: "1",
-                                          padding: "20px",
-                                          backgroundColor: "cyan",
-                                          ...providedField.draggableProps.style,
-                                        };
-                                        styles = edit
-                                          ? {
-                                              ...styles,
-                                              maxWidth: "200px",
-                                            }
-                                          : {
-                                              ...styles,
-                                              minWidth: "0",
-                                            };
-
-                                        return (
-                                          <div
-                                            ref={providedField.innerRef}
-                                            {...providedField.draggableProps}
-                                            {...dragHandleProps}
-                                            style={styles}
-                                          >
-                                            <Droppable
-                                              key={`column-${rowIndex}-${columnIndex}`}
-                                              droppableId={`column-${rowIndex}-${columnIndex}`}
-                                              direction="vertical"
-                                              type="field"
-                                            >
-                                              {(providedCol, snapshot) => {
-                                                return (
-                                                  <div
-                                                    ref={providedCol.innerRef}
-                                                    style={{
-                                                      background:
-                                                        snapshot.isDraggingOver
-                                                          ? "pink"
-                                                          : "purple",
-                                                      minHeight: "40px",
-                                                      display: "flex",
-                                                      flex: "1",
-                                                      flexDirection: "column",
-                                                      gap: "10px",
-                                                      minWidth: "0",
-                                                    }}
-                                                    {...providedCol.droppableProps}
-                                                  >
-                                                    {column.map(
-                                                      (field, fieldIndex) => (
-                                                        <Draggable
-                                                          key={field.field}
-                                                          draggableId={
-                                                            field.field
-                                                          }
-                                                          index={fieldIndex}
-                                                          type="field"
-                                                          isDragDisabled={!edit}
-                                                        >
-                                                          {(
-                                                            providedField,
-                                                            snapshot
-                                                          ) => (
-                                                            <div
-                                                              className="field"
-                                                              ref={
-                                                                providedField.innerRef
-                                                              }
-                                                              {...providedField.draggableProps}
-                                                              {...providedField.dragHandleProps}
-                                                              style={{
-                                                                display: "flex",
-                                                                justifyContent:
-                                                                  "center",
-                                                                alignItems:
-                                                                  "center",
-                                                                textAlign:
-                                                                  "center",
-                                                                padding: "10px",
-                                                                backgroundColor:
-                                                                  "white",
-                                                                height: "100%",
-                                                                ...providedField
-                                                                  .draggableProps
-                                                                  .style,
-                                                              }}
-                                                            >
-                                                              {field.title}
-                                                            </div>
-                                                          )}
-                                                        </Draggable>
-                                                      )
-                                                    )}
-                                                    {providedCol.placeholder}
-                                                  </div>
-                                                );
-                                              }}
-                                            </Droppable>
-                                          </div>
-                                        );
-                                      }}
-                                    </Draggable>
-                                  ))}
-                                  {providedRow.placeholder}
-                                  {edit && (
-                                    <Droppable
-                                      key={`addColumn-${rowIndex}`}
-                                      droppableId={`addColumn-${rowIndex}`}
-                                      direction="vertical"
-                                      type="field"
-                                    >
-                                      {(provided, snapshot) => (
-                                        <div
-                                          ref={provided.innerRef}
-                                          className="plusCol"
-                                          style={{
-                                            backgroundColor:
-                                              snapshot.isDraggingOver
-                                                ? "purple"
-                                                : "orange",
-                                            width: "auto",
-                                            maxWidth: columnMaxWidth,
-                                          }}
-                                          {...provided.droppableProps}
-                                        >
-                                          +
-                                        </div>
-                                      )}
-                                    </Droppable>
-                                  )}
-                                </div>
-                              );
+                      {(providedField, snapshot) => {
+                        return (
+                          <div
+                            ref={providedField.innerRef}
+                            {...providedField.draggableProps}
+                            {...providedField.dragHandleProps}
+                            style={{
+                              background: "orange",
+                              minHeight: "40px",
+                              minWidth: "200px",
+                              height: "fit-content",
+                              display: "flex",
+                              padding: "20px",
+                              ...providedField.draggableProps.style,
                             }}
-                          </Droppable>
-                        </div>
-                      )}
+                          >
+                            <Droppable
+                              key={`group-${rowIndex}`}
+                              droppableId={`group-${rowIndex}`}
+                              direction="horizontal"
+                              type="column"
+                            >
+                              {(providedRow, snapshotRow) => {
+                                let columnMaxWidth = edit ? "none" : "120px";
+
+                                return (
+                                  <div
+                                    ref={providedRow.innerRef}
+                                    style={{
+                                      background: "grey",
+                                      minHeight: "40px",
+                                      minWidth: "200px",
+                                      flex: "1",
+                                      display: "flex",
+                                    }}
+                                    {...providedRow.droppableProps}
+                                  >
+                                    {row.map((column, columnIndex) => (
+                                      <Draggable
+                                        key={`column-${rowIndex}-${columnIndex}-grab`}
+                                        draggableId={`column-${rowIndex}-${columnIndex}-grab`}
+                                        index={columnIndex}
+                                        type="column"
+                                        isDragDisabled={!edit}
+                                      >
+                                        {(providedField, snapshot) => {
+                                          let styles = {
+                                            display: "flex",
+                                            flex: "1",
+                                            padding: "20px",
+                                            backgroundColor: "cyan",
+                                            ...providedField.draggableProps
+                                              .style,
+                                          };
+                                          styles = edit
+                                            ? {
+                                                ...styles,
+                                                maxWidth: "200px",
+                                              }
+                                            : {
+                                                ...styles,
+                                                minWidth: "0",
+                                              };
+
+                                          return (
+                                            <div
+                                              ref={providedField.innerRef}
+                                              {...providedField.draggableProps}
+                                              {...providedField.dragHandleProps}
+                                              style={styles}
+                                            >
+                                              <Droppable
+                                                key={`column-${rowIndex}-${columnIndex}`}
+                                                droppableId={`column-${rowIndex}-${columnIndex}`}
+                                                direction="vertical"
+                                                type="field"
+                                              >
+                                                {(providedCol, snapshot) => {
+                                                  return (
+                                                    <div
+                                                      ref={providedCol.innerRef}
+                                                      style={{
+                                                        background:
+                                                          snapshot.isDraggingOver
+                                                            ? "pink"
+                                                            : "purple",
+                                                        minHeight: "40px",
+                                                        display: "flex",
+                                                        flex: "1",
+                                                        flexDirection: "column",
+                                                        gap: "10px",
+                                                        minWidth: "0",
+                                                      }}
+                                                      {...providedCol.droppableProps}
+                                                    >
+                                                      {column.map(
+                                                        (field, fieldIndex) => (
+                                                          <Draggable
+                                                            key={field.field}
+                                                            draggableId={
+                                                              field.field
+                                                            }
+                                                            index={fieldIndex}
+                                                            type="field"
+                                                            isDragDisabled={
+                                                              !edit
+                                                            }
+                                                          >
+                                                            {(
+                                                              providedField,
+                                                              snapshot
+                                                            ) => (
+                                                              <div
+                                                                className="field"
+                                                                ref={
+                                                                  providedField.innerRef
+                                                                }
+                                                                {...providedField.draggableProps}
+                                                                {...providedField.dragHandleProps}
+                                                                style={{
+                                                                  display:
+                                                                    "flex",
+                                                                  justifyContent:
+                                                                    "center",
+                                                                  alignItems:
+                                                                    "center",
+                                                                  textAlign:
+                                                                    "center",
+                                                                  padding:
+                                                                    "10px",
+                                                                  border:
+                                                                    field.type ===
+                                                                    "title"
+                                                                      ? "5px solid green"
+                                                                      : "none",
+                                                                  backgroundColor:
+                                                                    "white",
+                                                                  height:
+                                                                    "100%",
+                                                                  ...providedField
+                                                                    .draggableProps
+                                                                    .style,
+                                                                }}
+                                                              >
+                                                                {field.title}
+                                                              </div>
+                                                            )}
+                                                          </Draggable>
+                                                        )
+                                                      )}
+                                                      {providedCol.placeholder}
+                                                    </div>
+                                                  );
+                                                }}
+                                              </Droppable>
+                                            </div>
+                                          );
+                                        }}
+                                      </Draggable>
+                                    ))}
+                                    {providedRow.placeholder}
+                                    {edit && (
+                                      <Droppable
+                                        key={`addColumn-${rowIndex}`}
+                                        droppableId={`addColumn-${rowIndex}`}
+                                        direction="vertical"
+                                        type="field"
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            className="plusCol"
+                                            style={{
+                                              backgroundColor:
+                                                snapshot.isDraggingOver
+                                                  ? "purple"
+                                                  : "orange",
+                                              width: "auto",
+                                              maxWidth: columnMaxWidth,
+                                            }}
+                                            {...provided.droppableProps}
+                                          >
+                                            +
+                                          </div>
+                                        )}
+                                      </Droppable>
+                                    )}
+                                  </div>
+                                );
+                              }}
+                            </Droppable>
+                          </div>
+                        );
+                      }}
                     </Draggable>
                   ))}
                   {edit && (
@@ -562,35 +597,38 @@ function App() {
                             {...provided.droppableProps}
                           >
                             <Droppable
-                      key={`addRowWithColumn`}
-                      droppableId={`addRowWithColumn`}
-                      direction="vertical"
-                      type={"column"}
-                    >
-                      {(provided, snapshot) => {
-                        let backgroundColor = "pink"
-                        if(snapshotUpper.isDraggingOver || snapshot.isDraggingOver)
-                         backgroundColor = "magenta"
-                        return (
-                          <div
-                            ref={provided.innerRef}
-                            className="plusRowWithColumn"
-                            style={{
-                              backgroundColor: backgroundColor
-                            }}
-                            {...provided.droppableProps}
-                          >
-                            +
-                          </div>
-                        );
-                      }}
-                    </Droppable>
+                              key={`addRowWithColumn`}
+                              droppableId={`addRowWithColumn`}
+                              direction="vertical"
+                              type={"column"}
+                            >
+                              {(provided, snapshot) => {
+                                let backgroundColor = "pink";
+                                if (
+                                  snapshotUpper.isDraggingOver ||
+                                  snapshot.isDraggingOver
+                                )
+                                  backgroundColor = "magenta";
+                                return (
+                                  <div
+                                    ref={provided.innerRef}
+                                    className="plusRowWithColumn"
+                                    style={{
+                                      backgroundColor: backgroundColor,
+                                    }}
+                                    {...provided.droppableProps}
+                                  >
+                                    +
+                                  </div>
+                                );
+                              }}
+                            </Droppable>
                           </div>
                         );
                       }}
                     </Droppable>
                   )}
-                  
+
                   {providedBase.placeholder}
                 </div>
               );
