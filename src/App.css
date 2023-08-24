@@ -5,6 +5,80 @@
   overflow: hidden;
 }
 
+.horizontal-side-panel {  
+  transition: 1s;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  justify-content: space-between;
+  transition: 1s;
+  border-radius: 0px 0px 30px 30px;
+  gap: 20px;
+  overflow: hidden;
+}
+.components{
+  width: fit-content;
+  flex: 1
+}
+.components button{
+  border: none;
+  outline: none;
+  padding: 20px;
+  border-radius: 20px;
+  min-width: 150px;
+  background-color: var(--bgSvetlejsia);
+  text-align: start;
+  position: relative;
+  cursor: pointer;
+}
+
+.components button::after{
+  content: "+";
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  background-color: var(--bgTmavsia);
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.side-panel-title-horizontal{
+  position: relative;
+  width: fit-content;
+}
+.side-panel-title-horizontal::after{
+  content: "";
+  position: absolute;
+  background-color: #101010;
+  height: 3px;
+  width: 70%;
+  bottom: -20px;
+  left: 0;
+}
+.open-panel-icon-horizontal,
+.close-panel-icon-horizontal {
+  width: fit-content;
+  margin: 0;
+  position: absolute;
+  cursor: pointer;
+  right: 30px;
+}
+
+.open-panel-icon-horizontal {
+  top: 50%;
+  transform: rotateZ(90deg) translateX(-80%);
+}
+.close-panel-icon-horizontal {
+  transform: rotateZ(90deg);
+  bottom: 20px;
+}
 .side-panel {
   height: 100vh;
   display: flex;
@@ -52,7 +126,7 @@
   right: 20px;
 }
 .marks {
-  height: 80vh;
+  max-height: 80vh;
   overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -72,7 +146,8 @@
 }
 
 .left-panel {
-  height: 90%;
+  height: fit-content;
+  max-height: 90%;
   width: 100%;
   gap: 10px;
   display: flex;
@@ -171,18 +246,26 @@ font-weight: bold;
   background-color: var(--bgSvetlejsia);
   border-radius: 30px;
   padding: 20px;
+  position: relative;
+  overflow-y: scroll;
+  max-height: 80vh;
+-ms-overflow-style: none; 
+scrollbar-width: none; 
 }
-
+.right-panel::-webkit-scrollbar {
+display: none;
+}
 .right-panel .line {  
-  background: black;
+  background: var(--bgTmavsia);
   display:flex;
   width:100%;
   height: 10px;
+  border-radius: 3px;
 }
 
 .right-panel .row{
   background: var(--bgTmavsia);
-  min-height: 40px;
+  min-height: fit-content;
   min-width: 200px;
   height: fit-content;
   display: flex;
@@ -192,7 +275,7 @@ font-weight: bold;
 
 .right-panel .group{
   background: var(--bgTmavsia);
-  min-height: 40px;
+  min-height: fit-content;
   min-width: 200px;
   flex: 1;
   display: flex;
@@ -205,11 +288,12 @@ font-weight: bold;
   padding: 20px;
   background-color: var(--bgSvetlejsia);
   border-radius: 20px;
+  min-height: fit-content;
 }
 
 .right-panel .column-droppable{
   background: var(--bgSvetlejsia);                                                            
-  min-height: 40px;
+  min-height: fit-content;
   display: flex;
   flex: 1;
   flex-direction: column;    
@@ -218,7 +302,7 @@ font-weight: bold;
 }
 
 .right-panel .field{
-  display: "flex";
+  display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -256,15 +340,3 @@ font-weight: bold;
   color: white;
   min-height: 70px;
 }
-
-/*
-<button
-                    onClick={() => {
-                      setRightFieldGroups((prev) => {
-                        return [...prev, [[{ type: "line" }]]];
-                      });
-                    }}
-                  >
-                    Pridať čiaru
-                  </button>
-*/

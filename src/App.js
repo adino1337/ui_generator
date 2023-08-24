@@ -277,7 +277,7 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="app">
-        <Sidebar title="Záložky" bgColor="#eaebef" nextBgColor="whitesmoke">
+        <Sidebar edit={true} title="Záložky" bgColor="#eaebef" nextBgColor={edit ? "whitesmoke" : "#eaebef"}>
           <div className="marks">
             {marks.map((mark, i) => {
               let active = activeMark === i ? "bold" : "normal";
@@ -354,7 +354,7 @@ function App() {
           </div>
         </Sidebar>
 
-        <Sidebar title="UI bloky" bgColor="whitesmoke" nextBgColor="#eaebef">
+        <Sidebar edit={edit} title="UI bloky" bgColor="whitesmoke" nextBgColor="#eaebef">
           <Droppable droppableId="left-list" type="field">
             {(provided) => (
               <div
@@ -394,7 +394,7 @@ function App() {
           </Droppable>
         </Sidebar>
 
-        <Sidebar title="Nadpisy" bgColor="#eaebef" nextBgColor="#eaebef">
+        <Sidebar edit={edit} title="Nadpisy" bgColor="#eaebef" nextBgColor="#eaebef">
           <form
             className="titleInputBox"
             onSubmit={(e) => {
@@ -463,7 +463,7 @@ function App() {
             <h4>Vytvorte UI schému</h4>
             <p>
               Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
-              nadpisov a ďalších vizuálnych detailov
+              nadpisov a ďalších komponentov
             </p>
           </div>
           <Droppable
@@ -479,6 +479,18 @@ function App() {
                   className="right-panel"
                   {...providedBase.droppableProps}
                 >
+                  <Sidebar orientation="horizontal" title="Ďalšie komponenty" bgColor="#eaebef" nextBgColor="whitesmoke" edit={edit}>
+                    <button
+                      onClick={() => {
+                        setRightFieldGroups((prev) => {
+                          return [...prev, [[{ type: "line" }]]];
+                        });
+                      }}
+                    >
+                      Čiara
+                    </button>
+                  </Sidebar>
+                  
                   {rightFieldGroups.map((row, rowIndex) => (
                     <Draggable
                       key={`row-${rowIndex}-grab`}
@@ -504,8 +516,7 @@ function App() {
                                   ...providedField.draggableProps.style,
                                 }}
                               >
-                                <div className="line"
-                                ></div>
+                                <div className="line"></div>
                               </div>
                             );
                           return (
@@ -513,7 +524,7 @@ function App() {
                               ref={providedField.innerRef}
                               {...providedField.draggableProps}
                               {...providedField.dragHandleProps}
-                              style={{                                
+                              style={{
                                 ...providedField.draggableProps.style,
                               }}
                               className="row"
@@ -606,7 +617,7 @@ function App() {
                                                                   }
                                                                   {...providedField.draggableProps}
                                                                   {...providedField.dragHandleProps}
-                                                                  style={{                                                                    
+                                                                  style={{
                                                                     ...providedField
                                                                       .draggableProps
                                                                       .style,
@@ -700,7 +711,7 @@ function App() {
                                         <h4>+</h4>
                                       </div>
                                     ) : (
-                                      <div style={{color: "#101010"}}>+</div>
+                                      <div style={{ color: "#101010" }}>+</div>
                                     )}
                                   </div>
                                 );
