@@ -7,6 +7,7 @@ function App() {
   const initialFields = schema;
 
   const [leftFields, setLeftFields] = useState(initialFields);
+  const [titleField, setTitleField] = useState([]);
   const [marks, setMarks] = useState([[]]);
   const [activeMark, setActiveMark] = useState(0);
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
@@ -243,10 +244,10 @@ function App() {
               return {
                 title: col.title,
               };
-            else if(col.type === "line")
-              return{
-                customComponent: "Line"
-              }
+            else if (col.type === "line")
+              return {
+                customComponent: "Line",
+              };
             else
               return {
                 field: col.field,
@@ -274,170 +275,197 @@ function App() {
   };
 
   return (
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="app">
-        <Sidebar>
-            <div>
-             
-              {marks.map((mark, i) => {
-                let active = activeMark === i ? "bold" : "normal";
-                let border =
-                  activeMark === i ? "3px solid black" : "1px solid black";
-                return (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      borderBottom: border,
-                      width: "60%",
-                      margin: "50px auto",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: "0 10px",
-                    }}
-                  >
-                    <h3
-                      style={{
-                        cursor: "pointer",
-                        fontWeight: active,
-                        margin: "20px 0 5px 0",
-                      }}
-                      onClick={() => changeMark(i)}
-                    >
-                      Záložka {i + 1}
-                    </h3>
-                    <h3
-                      style={{
-                        cursor: "pointer",
-                        fontWeight: active,
-                        margin: "20px 0 5px 0",
-                      }}
-                      onClick={() => deleteMark(i)}
-                    >
-                      X
-                    </h3>
-                  </div>
-                );
-              })}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "30px",
-                }}
-              >
-                <button
-                  onClick={() => {
-                    setMarks((prevMarks) => [...prevMarks, []]);
-                    setButtonClicked(true);
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="app">
+        <Sidebar title="Záložky" bgColor="#eaebef" nextBgColor="whitesmoke">
+          <div className="marks">
+            {marks.map((mark, i) => {
+              let active = activeMark === i ? "bold" : "normal";
+              let border =
+                activeMark === i ? "3px solid black" : "1px solid black";
+              return (
+                <div
+                  className="mark"
+                  style={{
+                    borderBottom: border,
                   }}
                 >
-                  Pridať záložku
-                </button>
-              </div>
-            </div>   
-                  
+                  <h3
+                    style={{
+                      cursor: "pointer",
+                      fontWeight: active,
+                      margin: "20px 0 5px 0",
+                    }}
+                    onClick={() => changeMark(i)}
+                  >
+                    Záložka {i + 1}
+                  </h3>
+                  <h3
+                    style={{
+                      cursor: "pointer",
+                      fontWeight: active,
+                      margin: "20px 0 5px 0",
+                    }}
+                    onClick={() => deleteMark(i)}
+                  >
+                    X
+                  </h3>
+                </div>
+              );
+            })}
             <div
               style={{
-                textAlign: "center",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "30px",
               }}
             >
               <button
-                onClick={generate}
-                style={{
-                  margin: "0 0 20px 0",
+                onClick={() => {
+                  setMarks((prevMarks) => [...prevMarks, []]);
+                  setButtonClicked(true);
                 }}
               >
-                GENEROVAŤ
-              </button>
-              <button
-                onClick={() => setEdit((prev) => !prev)}
-                style={{
-                  margin: "0 0 20px 0",
-                }}
-              >
-                Nahliadnuť export
+                Pridať záložku
               </button>
             </div>
-               
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+            }}
+          >
+            <button
+              onClick={generate}
+              style={{
+                margin: "0 0 20px 0",
+              }}
+            >
+              GENEROVAŤ
+            </button>
+            <button
+              onClick={() => setEdit((prev) => !prev)}
+              style={{
+                margin: "0 0 20px 0",
+              }}
+            >
+              Nahliadnuť export
+            </button>
+          </div>
         </Sidebar>
 
+        <Sidebar title="UI bloky" bgColor="whitesmoke" nextBgColor="#eaebef">
           <Droppable droppableId="left-list" type="field">
-            {(provided, snapshot) => (
+            {(provided) => (
               <div
                 ref={provided.innerRef}
                 className="left-panel"
                 {...provided.droppableProps}
               >
-                <div>
-                  <input
-                    value={titleText}
-                    onChange={(e) => setTitleText(e.target.value)}
-                  />
-                  <button
-                    onClick={() => {
-                      if(titleText.length){
-                      setLeftFields((prev) => [
-                        {
-                          type: "title",
-                          title: "Nadpis: " + titleText,
-                          field: titleText + "-" + Date.now(),
-                        },
-                        ...prev,
-                      ]);
-                      setTitleText("");}
-                    }}
-                  >
-                    Pridať Nadpis
-                  </button>
-                  <button
-                    onClick={() => {
-                      setRightFieldGroups((prev) => {
-                        return [...prev, [[{ type: "line" }]]];
-                      });
-                    }}
-                  >
-                    Pridať čiaru
-                  </button>
-                </div>
-                {leftFields.map((field, index) => (
-                  <Draggable
-                    key={field.field}
-                    draggableId={field.field}
-                    index={index}
-                    type="field"
-                    isDragDisabled={!edit}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          textAlign: "center",
-                          padding: "10px",
-                          width: "80%",
-                          border:
-                            field.type === "title" ? "5px solid green" : "none",
-                          backgroundColor: "white",
-                          ...provided.draggableProps.style,
-                        }}
+                {leftFields.map((field, index) => {
+                  if (field.type !== "title")
+                    return (
+                      <Draggable
+                        key={field.field}
+                        draggableId={field.field}
+                        index={index}
+                        type="field"
+                        isDragDisabled={!edit}
                       >
-                        {field.title}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="field"
+                            style={{
+                              ...provided.draggableProps.style,
+                            }}
+                          >
+                            {field.title}
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                })}
                 {provided.placeholder}
               </div>
             )}
           </Droppable>
-          
-          <div className="right-panel-wrapper">
+        </Sidebar>
+
+        <Sidebar title="Nadpisy" bgColor="#eaebef" nextBgColor="#eaebef">
+          <form
+            className="titleInputBox"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (titleText.length) {
+                setTitleField((prev) => [
+                  {
+                    type: "title",
+                    title: "Nadpis: " + titleText,
+                    field: titleText + "-" + Date.now(),
+                  },
+                  ...prev,
+                ]);
+                setTitleText("");
+              }
+            }}
+          >
+            <input
+              value={titleText}
+              onChange={(e) => setTitleText(e.target.value)}
+              placeholder="Nadpis"
+            />
+            <button>Pridať Nadpis</button>
+          </form>
+          <Droppable droppableId="title-list" type="field">
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                className="left-panel"
+                style={{ marginTop: "10px" }}
+                {...provided.droppableProps}
+              >
+                {titleField.map((field, index) => {
+                  return (
+                    <Draggable
+                      key={field.field}
+                      draggableId={field.field}
+                      index={index}
+                      type="field"
+                      isDragDisabled={!edit}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="field"
+                          style={{
+                            ...provided.draggableProps.style,
+                          }}
+                        >
+                          {field.title}
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </Sidebar>
+
+        <div className="right-panel-wrapper">
+          <div className="text">
             <h4>Vytvorte UI schému</h4>
-            <p>Vyskladajte si vlastnú schému pomocou UI blokov, vlastných nadpisov a ďalších vizuálnych detailov</p>
+            <p>
+              Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
+              nadpisov a ďalších vizuálnych detailov
+            </p>
+          </div>
           <Droppable
             key={`base`}
             droppableId={`base`}
@@ -476,14 +504,8 @@ function App() {
                                   ...providedField.draggableProps.style,
                                 }}
                               >
-                               <div
-                                style={{
-                                  background: "black",
-                                  display: "flex",
-                                  width: "100%",
-                                  height: "10px",
-                                }}
-                               ></div>
+                                <div className="line"
+                                ></div>
                               </div>
                             );
                           return (
@@ -491,15 +513,10 @@ function App() {
                               ref={providedField.innerRef}
                               {...providedField.draggableProps}
                               {...providedField.dragHandleProps}
-                              style={{
-                                background: "orange",
-                                minHeight: "40px",
-                                minWidth: "200px",
-                                height: "fit-content",
-                                display: "flex",
-                                padding: "20px",
+                              style={{                                
                                 ...providedField.draggableProps.style,
                               }}
+                              className="row"
                             >
                               <Droppable
                                 key={`group-${rowIndex}`}
@@ -513,13 +530,7 @@ function App() {
                                   return (
                                     <div
                                       ref={providedRow.innerRef}
-                                      style={{
-                                        background: "grey",
-                                        minHeight: "40px",
-                                        minWidth: "200px",
-                                        flex: "1",
-                                        display: "flex",
-                                      }}
+                                      className="group"
                                       {...providedRow.droppableProps}
                                     >
                                       {row.map((column, columnIndex) => (
@@ -532,10 +543,6 @@ function App() {
                                         >
                                           {(providedField, snapshot) => {
                                             let styles = {
-                                              display: "flex",
-                                              flex: "1",
-                                              padding: "20px",
-                                              backgroundColor: "cyan",
                                               ...providedField.draggableProps
                                                 .style,
                                             };
@@ -555,6 +562,7 @@ function App() {
                                                 {...providedField.draggableProps}
                                                 {...providedField.dragHandleProps}
                                                 style={styles}
+                                                className="column"
                                               >
                                                 <Droppable
                                                   key={`column-${rowIndex}-${columnIndex}`}
@@ -568,19 +576,7 @@ function App() {
                                                         ref={
                                                           providedCol.innerRef
                                                         }
-                                                        style={{
-                                                          background:
-                                                            snapshot.isDraggingOver
-                                                              ? "pink"
-                                                              : "purple",
-                                                          minHeight: "40px",
-                                                          display: "flex",
-                                                          flex: "1",
-                                                          flexDirection:
-                                                            "column",
-                                                          gap: "10px",
-                                                          minWidth: "0",
-                                                        }}
+                                                        className="column-droppable"
                                                         {...providedCol.droppableProps}
                                                       >
                                                         {column.map(
@@ -610,26 +606,7 @@ function App() {
                                                                   }
                                                                   {...providedField.draggableProps}
                                                                   {...providedField.dragHandleProps}
-                                                                  style={{
-                                                                    display:
-                                                                      "flex",
-                                                                    justifyContent:
-                                                                      "center",
-                                                                    alignItems:
-                                                                      "center",
-                                                                    textAlign:
-                                                                      "center",
-                                                                    padding:
-                                                                      "10px",
-                                                                    border:
-                                                                      field.type ===
-                                                                      "title"
-                                                                        ? "5px solid green"
-                                                                        : "none",
-                                                                    backgroundColor:
-                                                                      "white",
-                                                                    height:
-                                                                      "100%",
+                                                                  style={{                                                                    
                                                                     ...providedField
                                                                       .draggableProps
                                                                       .style,
@@ -666,11 +643,6 @@ function App() {
                                               ref={provided.innerRef}
                                               className="plusCol"
                                               style={{
-                                                backgroundColor:
-                                                  snapshot.isDraggingOver
-                                                    ? "purple"
-                                                    : "orange",
-                                                width: "auto",
                                                 maxWidth: columnMaxWidth,
                                               }}
                                               {...provided.droppableProps}
@@ -706,7 +678,6 @@ function App() {
                           <div
                             ref={provided.innerRef}
                             className="plusRow"
-                            
                             {...provided.droppableProps}
                           >
                             <Droppable
@@ -716,20 +687,21 @@ function App() {
                               type={"column"}
                             >
                               {(provided, snapshot) => {
-                                
                                 return (
                                   <div
                                     ref={provided.innerRef}
                                     className="plusRowWithColumn"
-                                   
                                     {...provided.droppableProps}
-                                  >{
-                                    rightFieldGroups.length===0 ?
-                                    <div>
-                                      <h2>UI Schéma</h2>
-                                      <h4>Pretiahnite a pustite daný blok</h4>
-                                      </div>:
-                                      <div>+</div>} 
+                                  >
+                                    {rightFieldGroups.length === 0 ? (
+                                      <div className="text">
+                                        <h2>UI Schéma</h2>
+                                        <h4>Pretiahnite a pustite daný blok</h4>
+                                        <h4>+</h4>
+                                      </div>
+                                    ) : (
+                                      <div style={{color: "#101010"}}>+</div>
+                                    )}
                                   </div>
                                 );
                               }}
@@ -743,10 +715,9 @@ function App() {
               );
             }}
           </Droppable>
-          </div>
-          
         </div>
-      </DragDropContext>
+      </div>
+    </DragDropContext>
   );
 }
 

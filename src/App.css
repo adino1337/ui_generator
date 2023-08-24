@@ -1,59 +1,143 @@
-.app{
+.app {
   display: flex;
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
 }
 
-.side-panel{  
-  background-color: var(--bgSvetlejsia);
-  min-height: 100vh;
+.side-panel {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   transition: 1s;
+  border-radius: 0px 50px 50px 0px;
 }
-.open-panel-icon,
-.close-panel-icon{
-  width: fit-content;
-  margin: 0;
+.side-panel-bg{
   position: absolute;
-  top: 10px;  
-  cursor: pointer;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
 }
-.open-panel-icon{
-  right: 50%;
-  transform: translateX(50%);
+.side-panel-title{
+  position: absolute;
+  left: 30px;
 }
-
-.close-panel-icon{
-  right: 20px;
-}
-
-.left-panel{
-  
-  height: calc(100vh - 20px);
-  width: 15%;
-  overflow-y: scroll;
-  background: var(--bgTmavsia);
-  padding: 10px;
-  gap: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items:center;
-}
-.left-panel::-webkit-scrollbar {
+.side-panel::-webkit-scrollbar {
   display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.left-panel {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.side-panel {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-.right-panel-wrapper{
-  min-width: 70%;
+.open-panel-icon,
+.close-panel-icon {
+  width: fit-content;
+  margin: 0;
+  position: absolute;
+  top: 10px;
+  cursor: pointer;
+}
+.open-panel-icon {
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.close-panel-icon {
+  right: 20px;
+}
+.marks {
+  height: 80vh;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin-top: 50px;
+}
+.marks::-webkit-scrollbar {
+  display: none;
+}
+
+.mark {
+  text-align: center;
+  width: 60%;
+  margin: 0 auto 30px auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.left-panel {
+  height: 90%;
+  width: 100%;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 70px;
+  overflow-y: scroll;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+.left-panel::-webkit-scrollbar {
+  display: none;
+}
+.left-panel .field{  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  width: 80%;
+  background-color: white;
+  border-radius: 10px;
+
+}
+
+.titleInputBox{
+  margin: 70px 0 25px 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  gap: 10px;
+  position: relative;
+}
+.titleInputBox::after{
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(50%);
+  height: 3px;
+  background-color: #101010;
+}
+.titleInputBox input{
+  border: none;
+  outline: none;
+  padding: 10px;
+  min-height: 20px;
+  border-radius: 10px;
+
+}
+
+.titleInputBox button{
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  background-color: var(--bgSvetlejsia);
+  border-radius: 10px;
+}
+.titleInputBox button:hover{
+
+font-weight: bold;
+}
+
+.right-panel-wrapper {
   min-height: calc(100vh - 20px);
   display: flex;
   flex: 1;
@@ -61,25 +145,100 @@
   gap: 10px;
   background-color: var(--bgTmavsia);
 }
-.right-panel{  
-  width: calc(100% - 60px);
-  margin: 30px;
+.right-panel-wrapper > .text{
+  margin-left: 30px;
+}
+
+.right-panel .text{
+  color: #101010;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.right-panel .text h2,
+.right-panel .text h4{
+  margin: 0;
+}
+.right-panel {
+  width: calc(100% - 100px);
+  margin: 0 30px 30px 30px;
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 10px;
   background-color: var(--bgSvetlejsia);
+  border-radius: 30px;
+  padding: 20px;
 }
 
-.plusCol{
+.right-panel .line {  
+  background: black;
+  display:flex;
+  width:100%;
+  height: 10px;
+}
+
+.right-panel .row{
+  background: var(--bgTmavsia);
+  min-height: 40px;
+  min-width: 200px;
+  height: fit-content;
+  display: flex;
+  padding: 20px;
+  border-radius: 30px;
+}
+
+.right-panel .group{
+  background: var(--bgTmavsia);
+  min-height: 40px;
+  min-width: 200px;
+  flex: 1;
+  display: flex;
+  gap: 20px;
+}
+
+.right-panel .column{  
+  display: flex;
+  flex: 1;
+  padding: 20px;
+  background-color: var(--bgSvetlejsia);
+  border-radius: 20px;
+}
+
+.right-panel .column-droppable{
+  background: var(--bgSvetlejsia);                                                            
+  min-height: 40px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;    
+  gap: 10px;
+  min-width: 0;
+}
+
+.right-panel .field{
+  display: "flex";
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  background-color: white;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.plusCol {
   display: flex;
   flex: 1;
   justify-content: center;
   align-items: center;
   font-size: 32px;
-  color: white;
+  color: #101010;
+  width: "auto";
+  background-color: var(--bgTmavsia);
 }
-.plusRow{
+.plusRow {
   display: flex;
   flex: 1;
   font-size: 32px;
@@ -87,7 +246,7 @@
   min-height: 70px;
   position: relative;
 }
-.plusRowWithColumn{
+.plusRowWithColumn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,3 +256,15 @@
   color: white;
   min-height: 70px;
 }
+
+/*
+<button
+                    onClick={() => {
+                      setRightFieldGroups((prev) => {
+                        return [...prev, [[{ type: "line" }]]];
+                      });
+                    }}
+                  >
+                    Pridať čiaru
+                  </button>
+*/
