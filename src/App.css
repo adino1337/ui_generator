@@ -1,7 +1,75 @@
-.App{
-  height: 100vh;
+.app{
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
+.side-panel{  
+  background-color: var(--bgSvetlejsia);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: 1s;
+}
+.open-panel-icon,
+.close-panel-icon{
+  width: fit-content;
+  margin: 0;
+  position: absolute;
+  top: 10px;  
+  cursor: pointer;
+}
+.open-panel-icon{
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.close-panel-icon{
+  right: 20px;
+}
+
+.left-panel{
+  
+  height: calc(100vh - 20px);
+  width: 15%;
+  overflow-y: scroll;
+  background: var(--bgTmavsia);
+  padding: 10px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+}
+.left-panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.left-panel {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.right-panel-wrapper{
+  min-width: 70%;
+  min-height: calc(100vh - 20px);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--bgTmavsia);
+}
+.right-panel{  
+  width: calc(100% - 60px);
+  margin: 30px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--bgSvetlejsia);
+}
 
 .plusCol{
   display: flex;

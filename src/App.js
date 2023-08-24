@@ -13,6 +13,7 @@ function App() {
   const [edit, setEdit] = useState(true);
   const [type, setType] = useState("field");
   const [titleText, setTitleText] = useState("");
+  const [sidePanel, setSidePanel] = useState(true)
   useEffect(() => {
     console.log("udpate");
     const updatedMarks = [...marks];
@@ -274,31 +275,116 @@ function App() {
   };
 
   return (
-    <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
+        <div className="app">
         <div
-          style={{
-            display: "flex",
-            width: "100%",
-            minHeight: "100vh",
-            overflow: "hidden",
-          }}
-        >
+        className="side-panel"
+            style={{
+              width: sidePanel ? "15%" : "75px",
+            }}
+          >
+            {
+              sidePanel ?
+            <>              
+            <div>
+            <h1
+               className="close-panel-icon"
+              onClick={()=>setSidePanel(false)}
+            >{'<'}
+              </h1> 
+              {marks.map((mark, i) => {
+                let active = activeMark === i ? "bold" : "normal";
+                let border =
+                  activeMark === i ? "3px solid black" : "1px solid black";
+                return (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      borderBottom: border,
+                      width: "60%",
+                      margin: "50px auto",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "0 10px",
+                    }}
+                  >
+                    <h3
+                      style={{
+                        cursor: "pointer",
+                        fontWeight: active,
+                        margin: "20px 0 5px 0",
+                      }}
+                      onClick={() => changeMark(i)}
+                    >
+                      Záložka {i + 1}
+                    </h3>
+                    <h3
+                      style={{
+                        cursor: "pointer",
+                        fontWeight: active,
+                        margin: "20px 0 5px 0",
+                      }}
+                      onClick={() => deleteMark(i)}
+                    >
+                      X
+                    </h3>
+                  </div>
+                );
+              })}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "30px",
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setMarks((prevMarks) => [...prevMarks, []]);
+                    setButtonClicked(true);
+                  }}
+                >
+                  Pridať záložku
+                </button>
+              </div>
+            </div>   
+                  
+            <div
+              style={{
+                textAlign: "center",
+              }}
+            >
+              <button
+                onClick={generate}
+                style={{
+                  margin: "0 0 20px 0",
+                }}
+              >
+                GENEROVAŤ
+              </button>
+              <button
+                onClick={() => setEdit((prev) => !prev)}
+                style={{
+                  margin: "0 0 20px 0",
+                }}
+              >
+                Nahliadnuť export
+              </button>
+            </div>
+            </>   
+            :
+            <h1
+                className="open-panel-icon"
+              onClick={()=>setSidePanel(true)}
+            >{'>'}</h1> 
+            }
+          </div>
+
           <Droppable droppableId="left-list" type="field">
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
-                style={{
-                  height: "calc(100vh - 20px)",
-                  width: "15%",
-                  overflowY: "scroll",
-                  background: "blue",
-                  padding: 10,
-                  gap: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
+                className="left-panel"
                 {...provided.droppableProps}
               >
                 <div>
@@ -308,6 +394,7 @@ function App() {
                   />
                   <button
                     onClick={() => {
+                      if(titleText.length){
                       setLeftFields((prev) => [
                         {
                           type: "title",
@@ -316,7 +403,7 @@ function App() {
                         },
                         ...prev,
                       ]);
-                      setTitleText("");
+                      setTitleText("");}
                     }}
                   >
                     Pridať Nadpis
@@ -366,6 +453,10 @@ function App() {
               </div>
             )}
           </Droppable>
+          
+          <div className="right-panel-wrapper">
+            <h4>Vytvorte UI schému</h4>
+            <p>Vyskladajte si vlastnú schému pomocou UI blokov, vlastných nadpisov a ďalších vizuálnych detailov</p>
           <Droppable
             key={`base`}
             droppableId={`base`}
@@ -376,15 +467,7 @@ function App() {
               return (
                 <div
                   ref={providedBase.innerRef}
-                  style={{
-                    width: "70%",
-                    minHeight: "calc(100vh - 20px)",
-                    background: "red",
-                    padding: 10,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
+                  className="right-panel"
                   {...providedBase.droppableProps}
                 >
                   {rightFieldGroups.map((row, rowIndex) => (
@@ -679,99 +762,10 @@ function App() {
               );
             }}
           </Droppable>
-          <div
-            style={{
-              backgroundColor: "yellow",
-              width: "15%",
-              minHeight: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              {marks.map((mark, i) => {
-                let active = activeMark === i ? "bold" : "normal";
-                let border =
-                  activeMark === i ? "3px solid black" : "1px solid black";
-                return (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      borderBottom: border,
-                      width: "60%",
-                      margin: "auto",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: "0 10px",
-                    }}
-                  >
-                    <h3
-                      style={{
-                        cursor: "pointer",
-                        fontWeight: active,
-                        margin: "20px 0 5px 0",
-                      }}
-                      onClick={() => changeMark(i)}
-                    >
-                      Záložka {i + 1}
-                    </h3>
-                    <h3
-                      style={{
-                        cursor: "pointer",
-                        fontWeight: active,
-                        margin: "20px 0 5px 0",
-                      }}
-                      onClick={() => deleteMark(i)}
-                    >
-                      X
-                    </h3>
-                  </div>
-                );
-              })}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "30px",
-                }}
-              >
-                <button
-                  onClick={() => {
-                    setMarks((prevMarks) => [...prevMarks, []]);
-                    setButtonClicked(true);
-                  }}
-                >
-                  Pridať záložku
-                </button>
-              </div>
-            </div>
-            <div
-              style={{
-                textAlign: "center",
-              }}
-            >
-              <button
-                onClick={generate}
-                style={{
-                  margin: "0 0 20px 0",
-                }}
-              >
-                GENEROVAŤ
-              </button>
-              <button
-                onClick={() => setEdit((prev) => !prev)}
-                style={{
-                  margin: "0 0 20px 0",
-                }}
-              >
-                Nahliadnuť export
-              </button>
-            </div>
           </div>
+          
         </div>
       </DragDropContext>
-    </div>
   );
 }
 
