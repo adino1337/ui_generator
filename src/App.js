@@ -14,12 +14,6 @@ function App() {
   const [edit, setEdit] = useState(true);
   const [type, setType] = useState("field");
   const [titleText, setTitleText] = useState("");
-  useEffect(() => {
-    const updatedMarks = [...marks];
-    updatedMarks[activeMark] = rightFieldGroups;
-    setMarks(updatedMarks);
-  }, [rightFieldGroups]);
-
   const [dragEnd, setDragEnd] = useState(false);
 
   useEffect(() => {
@@ -39,6 +33,8 @@ function App() {
 
     const sourceList = result.source.droppableId;
     const destinationList = result.destination.droppableId;
+
+
     if (sourceList === "left-list" && destinationList === "addRow") {
       const [movedField] = leftFields.splice(result.source.index, 1);
       setRightFieldGroups((prev) => [...prev, [[movedField]]]);
@@ -65,7 +61,6 @@ function App() {
       if (sourceList.split("-")[0] === "column") {
         let rowNumber = sourceList.split("-")[1];
         let columnNumber = sourceList.split("-")[2];
-        console.log(`Presun vo column ${rowNumber} ${columnNumber}`);
         const sourceFields = rightFieldGroups[rowNumber][columnNumber];
         const [movedField] = sourceFields.splice(result.source.index, 1);
         sourceFields.splice(result.destination.index, 0, movedField);
@@ -93,7 +88,6 @@ function App() {
         setTitleField([...sourceFields]);
       } else if (sourceList.split("-")[0] === "group") {
         let rowNumber = sourceList.split("-")[1];
-        console.log(`Presun medzi column`);
         const sourceFields = rightFieldGroups[rowNumber];
         const [movedField] = sourceFields.splice(result.source.index, 1);
         sourceFields.splice(result.destination.index, 0, movedField);
@@ -248,12 +242,38 @@ function App() {
     }
   };
 
+  const deleteField = (rowIndex,columnIndex,fieldIndex,fieldType) => {
+    const movedField = rightFieldGroups[rowIndex][columnIndex][fieldIndex];
+    setRightFieldGroups(prev => {
+      return prev.map((row,rowID)=>{
+        if(rowID !== rowIndex)
+        return row
+        
+        return row.map((column,colID)=>{
+          if(colID !== columnIndex)
+          return column
+          return column.filter((field,fieldID)=>fieldID!==fieldIndex)
+        })
+      })
+    })
+    if(fieldType==="title")
+    setTitleField(prev=>[movedField, ...prev])
+    else
+    setLeftFields(prev=>[movedField, ...prev])
+  }
+
+
+  useEffect(() => {
+    const updatedMarks = [...marks];
+    updatedMarks[activeMark] = rightFieldGroups;
+    setMarks(updatedMarks);
+  }, [rightFieldGroups]);
+
   const deleteMark = (index) => {
     if (marks.length !== 1) {
       const updatedMarks = [...marks];
       updatedMarks.splice(index, 1);
       setMarks(updatedMarks);
-      console.log(index);
       if (index === activeMark) {
         setActiveMark(0);
       }
@@ -574,8 +594,9 @@ function App() {
                                   display: "flex",
                                   ...providedField.draggableProps.style,
                                 }}
+                                onClick={() => {if(edit) setRightFieldGroups(prev => prev.filter((row, rowID) => rowID !== rowIndex))}}
                               >
-                                <div className="line"></div>
+                                <div className="line" ></div>
                               </div>
                             );
                           return (
@@ -706,8 +727,16 @@ function App() {
                                                                     }}
                                                                   >
                                                                     {
+                                                                    edit &&
+                                                                    <div className="delete"
+                                                                      onClick={() => {field.type==="title" ? deleteField(rowIndex,columnIndex,fieldIndex,"title") : deleteField(rowIndex,columnIndex,fieldIndex,"UIBlock")}}
+                                                                    >X</div>
+                                                                    }
+                                                                    <div>                                                                    
+                                                                    {
                                                                       field.title
                                                                     }
+                                                                    </div>
                                                                   </div>
                                                                 )}
                                                               </Draggable>

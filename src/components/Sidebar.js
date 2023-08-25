@@ -50,6 +50,7 @@ if(props.orientation !== "horizontal" && props.edit){
   <div
   className="horizontal-side-panel"
   style={{
+    minHeight: sidePanel ? "150px" : "40px",
     height: sidePanel ? "150px" : "40px",
     backgroundColor: props.bgColor,
     position: "relative",
