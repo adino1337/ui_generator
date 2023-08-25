@@ -15,7 +15,6 @@ function App() {
   const [type, setType] = useState("field");
   const [titleText, setTitleText] = useState("");
   useEffect(() => {
-    console.log("udpate");
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
     setMarks(updatedMarks);
@@ -40,9 +39,12 @@ function App() {
 
     const sourceList = result.source.droppableId;
     const destinationList = result.destination.droppableId;
-    console.log(sourceList, destinationList);
     if (sourceList === "left-list" && destinationList === "addRow") {
       const [movedField] = leftFields.splice(result.source.index, 1);
+      setRightFieldGroups((prev) => [...prev, [[movedField]]]);
+      return;
+    } else if (sourceList === "title-list" && destinationList === "addRow") {
+      const [movedField] = titleField.splice(result.source.index, 1);
       setRightFieldGroups((prev) => [...prev, [[movedField]]]);
       return;
     } else if (
@@ -56,6 +58,8 @@ function App() {
       setRightFieldGroups((prev) => [...prev, [[movedField]]]);
       return;
     }
+    if (sourceList === "title-list" && destinationList === "left-list") return;
+    if (sourceList === "left-list" && destinationList === "title-list") return;
 
     if (sourceList === destinationList) {
       if (sourceList.split("-")[0] === "column") {
@@ -82,6 +86,11 @@ function App() {
         const [movedField] = sourceFields.splice(result.source.index, 1);
         sourceFields.splice(result.destination.index, 0, movedField);
         setLeftFields([...sourceFields]);
+      } else if (sourceList === "title-list") {
+        const sourceFields = titleField;
+        const [movedField] = sourceFields.splice(result.source.index, 1);
+        sourceFields.splice(result.destination.index, 0, movedField);
+        setTitleField([...sourceFields]);
       } else if (sourceList.split("-")[0] === "group") {
         let rowNumber = sourceList.split("-")[1];
         console.log(`Presun medzi column`);
@@ -93,10 +102,45 @@ function App() {
         const [movedField] = sourceFields.splice(result.source.index, 1);
         sourceFields.splice(result.destination.index, 0, movedField);
       }
-    } else if (destinationList !== "left-list") {
+    } else if (
+      destinationList !== "left-list" &&
+      destinationList !== "title-list"
+    ) {
       // Presun z ľavého zoznamu do pravého
       if (sourceList === "left-list") {
         const [movedField] = leftFields.splice(result.source.index, 1);
+        if (destinationList.split("-")[0] === "addColumn") {
+          let rowNumber = parseInt(destinationList.split("-")[1]);
+          //pridá array do arraya podľa groupnumber v rightFieldGroups
+          setRightFieldGroups((prev) => {
+            return prev.map((row, i) => {
+              if (i === rowNumber) return [...row, [movedField]];
+              else return row;
+            });
+          });
+        } else if (destinationList.split("-")[0] === "column") {
+          const rowNumber = parseInt(destinationList.split("-")[1]);
+          const columnNumber = parseInt(destinationList.split("-")[2]);
+          let destinationIndex = parseInt(result.destination.index);
+
+          setRightFieldGroups((prev) => {
+            return prev.map((row, rowIndex) => {
+              if (rowIndex === rowNumber) {
+                return row.map((column, columnIndex) => {
+                  if (columnIndex === columnNumber) {
+                    let updatedColumn = [...column];
+                    updatedColumn.splice(destinationIndex, 0, movedField);
+                    return updatedColumn;
+                  } else return column;
+                });
+              } else {
+                return row;
+              }
+            });
+          });
+        }
+      } else if (sourceList === "title-list") {
+        const [movedField] = titleField.splice(result.source.index, 1);
         if (destinationList.split("-")[0] === "addColumn") {
           let rowNumber = parseInt(destinationList.split("-")[1]);
           //pridá array do arraya podľa groupnumber v rightFieldGroups
@@ -188,8 +232,19 @@ function App() {
       let rowNumber = sourceList.split("-")[1];
       let columnNumber = sourceList.split("-")[2];
       const sourceFields = rightFieldGroups[rowNumber][columnNumber];
+      if (sourceFields[result.source.index].type === "title") return;
       const [movedField] = sourceFields.splice(result.source.index, 1);
       leftFields.splice(result.destination.index, 0, movedField);
+    } else if (
+      sourceList !== "title-list" &&
+      destinationList === "title-list"
+    ) {
+      let rowNumber = sourceList.split("-")[1];
+      let columnNumber = sourceList.split("-")[2];
+      const sourceFields = rightFieldGroups[rowNumber][columnNumber];
+      if (sourceFields[result.source.index].type !== "title") return;
+      const [movedField] = sourceFields.splice(result.source.index, 1);
+      titleField.splice(result.destination.index, 0, movedField);
     }
   };
 
@@ -206,24 +261,12 @@ function App() {
   };
 
   const changeMark = (index) => {
-    /*
-    console.log("Start\nMarks")
-    console.log(marks)
-    console.log("right field groups")
-    console.log(rightFieldGroups)*/
-
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
     setMarks(updatedMarks);
 
     setActiveMark(index);
     setRightFieldGroups(marks[index]);
-
-    /*
-    console.log("End\nMarks")
-    console.log(marks)
-    console.log("right field groups")
-    console.log(rightFieldGroups)*/
   };
 
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -277,7 +320,12 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="app">
-        <Sidebar edit={true} title="Záložky" bgColor="#eaebef" nextBgColor={edit ? "whitesmoke" : "#eaebef"}>
+        <Sidebar
+          edit={true}
+          title="Záložky"
+          bgColor="#eaebef"
+          nextBgColor={edit ? "whitesmoke" : "#eaebef"}
+        >
           <div className="marks">
             {marks.map((mark, i) => {
               let active = activeMark === i ? "bold" : "normal";
@@ -330,31 +378,14 @@ function App() {
               </button>
             </div>
           </div>
-          <div
-            style={{
-              textAlign: "center",
-            }}
-          >
-            <button
-              onClick={generate}
-              style={{
-                margin: "0 0 20px 0",
-              }}
-            >
-              GENEROVAŤ
-            </button>
-            <button
-              onClick={() => setEdit((prev) => !prev)}
-              style={{
-                margin: "0 0 20px 0",
-              }}
-            >
-              Nahliadnuť export
-            </button>
-          </div>
         </Sidebar>
 
-        <Sidebar edit={edit} title="UI bloky" bgColor="whitesmoke" nextBgColor="#eaebef">
+        <Sidebar
+          edit={edit}
+          title="UI bloky"
+          bgColor="whitesmoke"
+          nextBgColor="#eaebef"
+        >
           <Droppable droppableId="left-list" type="field">
             {(provided) => (
               <div
@@ -394,7 +425,12 @@ function App() {
           </Droppable>
         </Sidebar>
 
-        <Sidebar edit={edit} title="Nadpisy" bgColor="#eaebef" nextBgColor="#eaebef">
+        <Sidebar
+          edit={edit}
+          title="Nadpisy"
+          bgColor="#eaebef"
+          nextBgColor="#eaebef"
+        >
           <form
             className="titleInputBox"
             onSubmit={(e) => {
@@ -459,12 +495,29 @@ function App() {
         </Sidebar>
 
         <div className="right-panel-wrapper">
-          <div className="text">
-            <h4>Vytvorte UI schému</h4>
-            <p>
-              Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
-              nadpisov a ďalších komponentov
-            </p>
+          <div className="info">
+            <div className="text">
+              <h4>Vytvorte UI schému</h4>
+              <p>
+                Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
+                nadpisov a ďalších komponentov
+              </p>
+            </div>
+
+            <div className="buttons">
+              <button
+                onClick={generate}
+                style={{fontWeight: "bold",}}
+              >
+                GENEROVAŤ
+              </button>
+              <button
+                onClick={() => setEdit((prev) => !prev)}
+                
+              >
+                Nahliadnuť export
+              </button>
+            </div>
           </div>
           <Droppable
             key={`base`}
@@ -479,7 +532,13 @@ function App() {
                   className="right-panel"
                   {...providedBase.droppableProps}
                 >
-                  <Sidebar orientation="horizontal" title="Ďalšie komponenty" bgColor="#eaebef" nextBgColor="whitesmoke" edit={edit}>
+                  <Sidebar
+                    orientation="horizontal"
+                    title="Ďalšie komponenty"
+                    bgColor="#eaebef"
+                    nextBgColor="whitesmoke"
+                    edit={edit}
+                  >
                     <button
                       onClick={() => {
                         setRightFieldGroups((prev) => {
@@ -490,7 +549,7 @@ function App() {
                       Čiara
                     </button>
                   </Sidebar>
-                  
+
                   {rightFieldGroups.map((row, rowIndex) => (
                     <Draggable
                       key={`row-${rowIndex}-grab`}
@@ -582,6 +641,14 @@ function App() {
                                                   type="field"
                                                 >
                                                   {(providedCol, snapshot) => {
+                                                    let styles =
+                                                      snapshot.isDraggingOver
+                                                        ? {
+                                                            background: `linear-gradient(-45deg, #eaebef 25%, transparent 25%, transparent 50%, #eaebef 50%, #eaebef 75%, transparent 75%, transparent)`,
+                                                            backgroundSize:
+                                                              "20px 20px",
+                                                          }
+                                                        : {};
                                                     return (
                                                       <div
                                                         ref={
@@ -589,45 +656,63 @@ function App() {
                                                         }
                                                         className="column-droppable"
                                                         {...providedCol.droppableProps}
+                                                        style={styles}
                                                       >
                                                         {column.map(
                                                           (
                                                             field,
                                                             fieldIndex
-                                                          ) => (
-                                                            <Draggable
-                                                              key={field.field}
-                                                              draggableId={
-                                                                field.field
-                                                              }
-                                                              index={fieldIndex}
-                                                              type="field"
-                                                              isDragDisabled={
-                                                                !edit
-                                                              }
-                                                            >
-                                                              {(
-                                                                providedField,
-                                                                snapshot
-                                                              ) => (
-                                                                <div
-                                                                  className="field"
-                                                                  ref={
-                                                                    providedField.innerRef
+                                                          ) => {
+                                                            let styles =
+                                                              field.type ===
+                                                              "title"
+                                                                ? {
+                                                                    border:
+                                                                      "2px solid #101010",
                                                                   }
-                                                                  {...providedField.draggableProps}
-                                                                  {...providedField.dragHandleProps}
-                                                                  style={{
-                                                                    ...providedField
-                                                                      .draggableProps
-                                                                      .style,
-                                                                  }}
-                                                                >
-                                                                  {field.title}
-                                                                </div>
-                                                              )}
-                                                            </Draggable>
-                                                          )
+                                                                : {};
+                                                            return (
+                                                              <Draggable
+                                                                key={
+                                                                  field.field
+                                                                }
+                                                                draggableId={
+                                                                  field.field
+                                                                }
+                                                                index={
+                                                                  fieldIndex
+                                                                }
+                                                                type="field"
+                                                                isDragDisabled={
+                                                                  !edit
+                                                                }
+                                                              >
+                                                                {(
+                                                                  providedField,
+                                                                  snapshot
+                                                                ) => (
+                                                                  <div
+                                                                    className="field"
+                                                                    ref={
+                                                                      providedField.innerRef
+                                                                    }
+                                                                    {...providedField.draggableProps}
+                                                                    {...providedField.dragHandleProps}
+                                                                    style={{
+                                                                      ...styles,
+                                                                      ...providedField
+                                                                        .draggableProps
+                                                                        .style,
+                                                                    }}
+                                                                  >
+                                                                    {
+                                                                      field.title
+                                                                    }
+                                                                  </div>
+                                                                )}
+                                                              </Draggable>
+                                                            );
+                                                          }
                                                         )}
                                                         {
                                                           providedCol.placeholder
@@ -649,18 +734,27 @@ function App() {
                                           direction="vertical"
                                           type="field"
                                         >
-                                          {(provided, snapshot) => (
-                                            <div
-                                              ref={provided.innerRef}
-                                              className="plusCol"
-                                              style={{
-                                                maxWidth: columnMaxWidth,
-                                              }}
-                                              {...provided.droppableProps}
-                                            >
-                                              +
-                                            </div>
-                                          )}
+                                          {(provided, snapshot) => {
+                                            let styles = snapshot.isDraggingOver
+                                              ? {
+                                                  background: `linear-gradient(-45deg, whitesmoke 25%, transparent 25%, transparent 50%, whitesmoke 50%, whitesmoke 75%, transparent 75%, transparent)`,
+                                                  backgroundSize: "20px 20px",
+                                                }
+                                              : {};
+                                            return (
+                                              <div
+                                                ref={provided.innerRef}
+                                                className="plusCol"
+                                                style={{
+                                                  ...styles,
+                                                  maxWidth: columnMaxWidth,
+                                                }}
+                                                {...provided.droppableProps}
+                                              >
+                                                +
+                                              </div>
+                                            );
+                                          }}
                                         </Droppable>
                                       )}
                                     </div>
@@ -684,12 +778,19 @@ function App() {
                       direction="vertical"
                       type={type}
                     >
-                      {(provided, snapshotUpper) => {
+                      {(provided, snapshot) => {
+                        let styles = snapshot.isDraggingOver
+                          ? {
+                              background: `linear-gradient(-45deg, #eaebef 25%, transparent 25%, transparent 50%, #eaebef 50%, #eaebef 75%, transparent 75%, transparent)`,
+                              backgroundSize: "20px 20px",
+                            }
+                          : {};
                         return (
                           <div
                             ref={provided.innerRef}
                             className="plusRow"
                             {...provided.droppableProps}
+                            style={styles}
                           >
                             <Droppable
                               key={`addRowWithColumn`}
@@ -698,11 +799,18 @@ function App() {
                               type={"column"}
                             >
                               {(provided, snapshot) => {
+                                let styles = snapshot.isDraggingOver
+                                  ? {
+                                      background: `linear-gradient(-45deg, #eaebef 25%, transparent 25%, transparent 50%, #eaebef 50%, #eaebef 75%, transparent 75%, transparent)`,
+                                      backgroundSize: "20px 20px",
+                                    }
+                                  : {};
                                 return (
                                   <div
                                     ref={provided.innerRef}
                                     className="plusRowWithColumn"
                                     {...provided.droppableProps}
+                                    style={styles}
                                   >
                                     {rightFieldGroups.length === 0 ? (
                                       <div className="text">

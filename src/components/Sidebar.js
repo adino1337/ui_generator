@@ -12,6 +12,7 @@ if(props.orientation !== "horizontal" && props.edit){
       style={{
         width: sidePanel ? "15%" : "75px",
         backgroundColor: props.bgColor,
+        cursor: "pointer",
       }}
       onClick={(e)=>{
         if(e.target.className === "close-panel-icon" || e.target.className==="side-panel")
@@ -49,11 +50,12 @@ if(props.orientation !== "horizontal" && props.edit){
   <div
   className="horizontal-side-panel"
   style={{
-    minHeight: sidePanel ? "150px" : "40px",
+    height: sidePanel ? "150px" : "40px",
     backgroundColor: props.bgColor,
     position: "relative",
     width: sidePanel && "calc(100% - 40px)",
-  }}
+    cursor: "pointer",
+  }}  
   onClick={(e)=>{
     if(e.target.className === "close-panel-icon-horizontal" || e.target.className==="horizontal-side-panel")
         setSidePanel(false)
