@@ -341,22 +341,21 @@ function App() {
     setMarks(updatedMarks);
   }, [rightFieldGroups]);
 
-  const deleteMark = (index) => {
-    if (marks.length !== 1) {
-      const updatedMarks = [...marks];
-      updatedMarks.splice(index, 1);
-      setMarks(updatedMarks);
-      if (index === activeMark) {
-        setActiveMark(0);
-      }
-    }
+  const deleteMark = (index) => {   
+      setMarks(prev => {
+        if(index===activeMark){
+          setActiveMark(0);
+          setRightFieldGroups(marks[0])
+        }else if(index < activeMark){     
+          setRightFieldGroups(marks[activeMark]) 
+          setActiveMark(prev => prev-1);
+        }
+        return prev.filter((mark, markID) => markID!==index)
+      });
+      
   };
 
   const changeMark = (index) => {
-    const updatedMarks = [...marks];
-    updatedMarks[activeMark] = rightFieldGroups;
-    setMarks(updatedMarks);
-
     setActiveMark(index);
     setRightFieldGroups(marks[index]);
   };
