@@ -1,3 +1,4 @@
+
 .app {
   display: flex;
   width: 100%;
@@ -26,10 +27,11 @@
   padding: 20px;
   border-radius: 20px;
   min-width: 150px;
-  background-color: var(--bgSvetlejsia);
+  background-color: var(--field);
   text-align: start;
   position: relative;
   cursor: pointer;
+  color: var(--textPrimary);
 }
 
 .components button::after{
@@ -42,7 +44,7 @@
   right: 20px;
   transform: translateY(-50%);
   border-radius: 50%;
-  color: white;
+  color: var(--secondary);
   display: grid;
   place-items: center;
   font-size: 28px;
@@ -52,15 +54,24 @@
 .side-panel-title-horizontal{
   position: relative;
   width: fit-content;
+  color: var(--secondary);
 }
 .side-panel-title-horizontal::after{
   content: "";
   position: absolute;
-  background-color: #101010;
+  background-color: var(--field);
   height: 3px;
   width: 70%;
   bottom: -20px;
   left: 0;
+}
+.side-panel-title-horizontal-open{
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--secondary);
 }
 .open-panel-icon-horizontal,
 .close-panel-icon-horizontal {
@@ -69,6 +80,7 @@
   position: absolute;
   cursor: pointer;
   right: 30px;
+  color: var(--field);
 }
 
 .open-panel-icon-horizontal {
@@ -99,6 +111,7 @@
 .side-panel-title{
   position: absolute;
   left: 30px;
+  color: var(--secondary);
 }
 .side-panel::-webkit-scrollbar {
   display: none;
@@ -116,6 +129,16 @@
   position: absolute;
   top: 10px;
   cursor: pointer;
+  color: var(--field);
+}
+.sidewaysText{
+  text-orientation: sideways; 
+  writing-mode: vertical-lr; 
+  display: flex;
+  flex: 1; 
+  align-items: center; 
+  justify-content: center;
+  color: var(--secondary);
 }
 .open-panel-icon {
   right: 50%;
@@ -130,7 +153,10 @@
   overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  margin-top: 50px;
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px
 }
 .marks::-webkit-scrollbar {
   display: none;
@@ -139,10 +165,19 @@
 .mark {
   text-align: center;
   width: 60%;
-  margin: 0 auto 30px auto;
   display: flex;
+  margin-left: 30px;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 0 0 30px;
+  position: relative;
+}
+.deleteMark{
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  margin: 0 !important;
+  font-size: 18px;
+  transform: translateY(-55%);
 }
 
 .left-panel {
@@ -168,7 +203,8 @@
   text-align: center;
   padding: 10px;
   width: 80%;
-  background-color: white;
+  background-color: var(--field);
+  color: var(--textPrimary);
   border-radius: 10px;
 
 }
@@ -189,7 +225,7 @@
   transform: translateX(-50%);
   width: calc(50%);
   height: 3px;
-  background-color: #101010;
+  background-color: var(--field);
 }
 .titleInputBox input{
   border: none;
@@ -197,7 +233,20 @@
   padding: 10px;
   min-height: 20px;
   border-radius: 10px;
+  background-color: var(--bgSvetlejsia);
+  color: var(--textPrimary);
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--secondary);
+  opacity: 1; /* Firefox */
+}
 
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--secondary);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: var(--secondary);
 }
 
 .titleInputBox button{
@@ -206,10 +255,8 @@
   padding: 10px;
   background-color: var(--bgSvetlejsia);
   border-radius: 10px;
-}
-.titleInputBox button:hover{
-
-font-weight: bold;
+  color: var(--field);
+  font-weight: bold;
 }
 
 .right-panel-wrapper {
@@ -225,6 +272,14 @@ font-weight: bold;
   display: flex;
   justify-content: space-between;
 }
+
+.right-panel-wrapper > .info > .text h4{
+  color: var(--textPrimary)
+}
+.right-panel-wrapper > .info > .text p{
+  color: var(--textSecondary)
+}
+
 .info .buttons{
   display: flex;
   flex-direction: row-reverse;
@@ -238,15 +293,14 @@ font-weight: bold;
   padding: 15px 20px;
   border-radius: 15px;
   cursor: pointer;
-  border: 3px solid var(--bgTmavsia);
+  border: none;
   outline: none;
-  background-color: var(--bgSvetlejsia);
+  background-color: var(--field);
   transition-duration: 250ms;
+  color: var(--textPrimary);
 }
 .info .buttons button:hover{
-  background-color: var(--bgTmavsia);
-  border: 3px solid var(--bgSvetlejsia);
-  border-radius: 0;
+  color: var(--secondary);
 }
 .right-panel .text{
   color: #101010;
@@ -254,11 +308,22 @@ font-weight: bold;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 }
-.right-panel .text h2,
+.right-panel .text h2{
+  margin: 0;
+  font-size: 28px;
+  color: var(--textPrimary);
+}
+.right-panel .text p{
+  margin: 0;
+  font-size: 16px;
+  color: var(--textSecondary);
+}
 .right-panel .text h4{
   margin: 0;
+  font-size: 32px;
+  color: var(--field);
 }
 .right-panel {
   width: calc(100% - 100px);
@@ -333,7 +398,8 @@ display: none;
   align-items: center;
   text-align: center;
   padding: 20px;
-  background-color: white;
+  background-color: var(--field);
+  color: var(--textPrimary);
   height: 100%;
   border-radius: 10px;
 }
@@ -355,7 +421,7 @@ display: none;
   justify-content: center;
   align-items: center;
   font-size: 32px;
-  color: #101010;
+  color: var(--field);
   width: "auto";
   background-color: var(--bgTmavsia);
 }
@@ -363,7 +429,7 @@ display: none;
   display: flex;
   flex: 1;
   font-size: 32px;
-  color: white;
+  color: var(--field);
   min-height: 70px;
   position: relative;
   
@@ -375,6 +441,6 @@ display: none;
   flex: 1;
   width: 100%;
   font-size: 32px;
-  color: white;
+  color: var(--field);
   min-height: 70px;
 }

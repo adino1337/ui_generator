@@ -34,7 +34,7 @@ if(props.orientation !== "horizontal" && props.edit){
         </>
       ) : (
         <>
-        <h1 style={{textOrientation: "sideways", writingMode: "vertical-lr", display: "flex", flex: "1", alignItems: "center", justifyContent: "center"}}>{props.title}</h1>
+        <h1 className="sidewaysText">{props.title}</h1>
         <h1 className="open-panel-icon" onClick={() =>{setSidePanel(true)}}>
           {">"}
         </h1>
@@ -80,7 +80,7 @@ if(props.orientation !== "horizontal" && props.edit){
       </>
     ):(
         <>
-        <h3 style={{display: "flex", flex: "1", alignItems: "center", justifyContent: "center", margin: "0"}}>{props.title}</h3>
+        <h3 className="side-panel-title-horizontal-open">{props.title}</h3>
         <h1 className="open-panel-icon-horizontal" onClick={() => setSidePanel(true)}>
           {">"}
         </h1>
