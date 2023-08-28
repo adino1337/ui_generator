@@ -263,6 +263,8 @@ function App() {
     else setLeftFields((prev) => [movedField, ...prev]);
   };
 
+  
+
   const [theme, setTheme] = useState("");
   const [themeStyles, setThemeStyles] = useState({});
 
@@ -349,6 +351,22 @@ function App() {
   }, [rightFieldGroups]);
 
   const deleteMark = (index) => {
+    if(marks[index] && marks[index][0]){       
+          marks[index].forEach(row=>{
+          row.forEach(col=>{
+            col.forEach(field => {
+              if(field.type && field.type==="title")
+                setTitleField(prev=>[field,...prev])
+              else if(field.type && field.type==="line")
+                return
+              else
+                setLeftFields(prev=>[field,...prev])
+            })
+          })
+        })
+
+  }
+
     setMarkNames((prev) => prev.filter((name, id) => id !== index));
     setMarks((prev) => {
       if (index === activeMark) {
@@ -360,6 +378,7 @@ function App() {
       }
       return prev.filter((mark, markID) => markID !== index);
     });
+    
   };
 
   const changeMark = (index) => {
@@ -377,8 +396,8 @@ function App() {
   }, [buttonClicked, marks]);
 
   useEffect(() => {
-    console.log(markNames);
-  }, [markNames]);
+    console.log(marks);
+  }, [marks]);
 
   return (
     <>
