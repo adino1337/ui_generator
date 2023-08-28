@@ -13,6 +13,7 @@ if(props.orientation !== "horizontal" && props.edit){
         width: sidePanel ? "15%" : "75px",
         backgroundColor: props.bgColor,
         cursor: "pointer",
+        borderRight: props.theme==="light" ? "3px solid black" : "none"
       }}
       onClick={(e)=>{
         if(e.target.className === "close-panel-icon" || e.target.className==="side-panel")
@@ -56,6 +57,10 @@ if(props.orientation !== "horizontal" && props.edit){
     position: "relative",
     width: sidePanel && "calc(100% - 40px)",
     cursor: "pointer",
+    borderBottom: props.theme==="light" ? "3px solid black" : "none",
+    borderLeft: props.theme==="light" ? "3px solid black" : "none",
+    borderRight: props.theme==="light" ? "3px solid black" : "none",
+
   }}  
   onClick={(e)=>{
     if(e.target.className === "close-panel-icon-horizontal" || e.target.className==="horizontal-side-panel")

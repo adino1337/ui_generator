@@ -5,6 +5,7 @@ import "./index.css";
 import schema from "./schemas/schema_3.json";
 import Sidebar from "./components/Sidebar";
 import getThemeStyles from "./assets/themes";
+import { X, PenLine } from 'lucide-react';
 
 function App() {
   const initialFields = schema;
@@ -12,6 +13,7 @@ function App() {
   const [leftFields, setLeftFields] = useState(initialFields);
   const [titleField, setTitleField] = useState([]);
   const [marks, setMarks] = useState([[]]);
+  const [markNames, setMarkNames] = useState(["Formulár"])
   const [activeMark, setActiveMark] = useState(0);
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
   const [edit, setEdit] = useState(true);
@@ -297,7 +299,7 @@ function App() {
   }, [themeStyles]);
 
   const generate = () => {
-    const fieldData = marks.map((mark) =>
+    let fieldData = marks.map((mark) =>
       mark.map((group) =>
         group.map((row) =>
           row.map((col) => {
@@ -317,6 +319,11 @@ function App() {
         )
       )
     );
+
+    
+    fieldData = fieldData.map((mark, i) => {
+      return [{markName: markNames[i]}, ...mark]
+    })
 
     const jsonData = JSON.stringify(fieldData, null, 2);
     // Vytvořte Blob objekt z JSON dat
@@ -341,7 +348,8 @@ function App() {
     setMarks(updatedMarks);
   }, [rightFieldGroups]);
 
-  const deleteMark = (index) => {   
+  const deleteMark = (index) => { 
+    setMarkNames(prev => prev.filter((name, id) => id !== index))  
       setMarks(prev => {
         if(index===activeMark){
           setActiveMark(0);
@@ -380,6 +388,7 @@ function App() {
             nextBgColor={
               edit ? themeStyles.bgSvetlejsia : themeStyles.bgTmavsia
             }
+            theme={theme}
           >
             <div className="marks">{/*
               <button onClick={() => setTheme("dark")}>dark Theme</button>
@@ -387,17 +396,15 @@ function App() {
               {marks.map((mark, i) => {
                 let active = activeMark === i ? "bold" : "normal";
                 let border =
-                  activeMark === i ? `3px solid ${themeStyles.field}` : `3px solid ${themeStyles.textPrimary}`;
+                  activeMark === i ? `3px solid ${themeStyles.field}` : theme==="dark" ? `3px solid ${themeStyles.textPrimary}` : "3px solid black";
                 return (
+                  <div className="mark">
                   <div
-                    className="mark"
+                    className="markText"
                     style={{
                       borderLeft: border,
                     }}
-                    onClick={(e) => {
-                      if(e.target.className === "deleteMark")
-                        deleteMark(i)
-                      else
+                    onClick={() => {
                         changeMark(i)
                     }}
                   >
@@ -406,20 +413,27 @@ function App() {
                         cursor: "pointer",
                         fontWeight: active,
                         margin: "5px 0",
-                        color: activeMark === i ? `${themeStyles.field}` : `${themeStyles.textPrimary}`
+                        color: activeMark === i ? `${themeStyles.field}` : theme==="dark" ? `${themeStyles.textPrimary}`: "black"
                       }}
                     >
-                      {i === 0 ? "Formulár" : `Záložka ${i}`}
+                      {markNames[i]}
                     </h3>
-                    {
-                      edit && i!==0 &&
-                      <div 
-                        className="deleteMark"
-                        style={{
-                          color: activeMark === i ? `${themeStyles.field}` : `${themeStyles.textPrimary}`
-                        }}
-                      >X</div>
-                    }
+                    
+                  </div>
+                  {
+                    edit && i!==0 &&
+                    <div
+                    className="icons">
+                    <X
+                      size={18}
+                      onClick={()=>deleteMark(i)}
+                    />
+                    <PenLine 
+                    size={22}
+                    onClick={()=>console.log(i)}
+                    />
+                    </div>
+                  }
                   </div>
                 );
               })}
@@ -434,6 +448,7 @@ function App() {
                 <button
                   onClick={() => {
                     setMarks((prevMarks) => [...prevMarks, []]);
+                    setMarkNames((prevNames) => [...prevNames, `Záložka ${prevNames.length}`]);
                     setButtonClicked(true);
                   }}
                   style={{
@@ -459,6 +474,7 @@ function App() {
             title="UI bloky"
             bgColor={themeStyles.bgSvetlejsia}
             nextBgColor={themeStyles.bgTmavsia}
+            theme={theme}
           >
             <Droppable droppableId="left-list" type="field">
               {(provided) => (
@@ -504,6 +520,7 @@ function App() {
             title="Nadpisy"
             bgColor={themeStyles.bgTmavsia}
             nextBgColor={themeStyles.bgTmavsia}
+            theme={theme}
           >
             <form
               className="titleInputBox"
@@ -526,6 +543,7 @@ function App() {
                 value={titleText}
                 onChange={(e) => setTitleText(e.target.value)}
                 placeholder="Nadpis"
+                style={{color: theme==="light" && "black"}}
               />
               <button>Pridať Nadpis</button>
             </form>
@@ -571,7 +589,7 @@ function App() {
           <div className="right-panel-wrapper">
             <div className="info">
               <div className="text">
-                <h4>Vytvorte UI schému</h4>
+                <h4 style={{color: theme==="light" && "black"}}>Vytvorte UI schému</h4>
                 <p>
                   Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
                   nadpisov a ďalších komponentov
@@ -583,7 +601,7 @@ function App() {
                   GENEROVAŤ
                 </button>
                 <button onClick={() => setEdit((prev) => !prev)}>
-                  {edit ? "Potvrdiť" : "Upraviť"}
+                  {edit ? "Náhľad" : "Upraviť"}
                 </button>
               </div>
             </div>
@@ -606,6 +624,7 @@ function App() {
                       bgColor={themeStyles.bgTmavsia}
                       nextBgColor={themeStyles.bgSvetlejsia}
                       edit={edit}
+                      theme={theme}
                     >
                       <button
                         onClick={() => {
@@ -922,7 +941,7 @@ function App() {
                                     >
                                       {rightFieldGroups.length === 0 ? (
                                         <div className="text">
-                                          <h2>UI SCHÉMA</h2>
+                                          <h2 style={{color: theme==="light" && "black"}}>UI SCHÉMA</h2>
                                           <p>
                                             pretiahnite a pustite daný blok
                                           </p>
