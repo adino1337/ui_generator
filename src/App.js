@@ -5,9 +5,10 @@ import "./index.css";
 import schema from "./schemas/schema_3.json";
 import Sidebar from "./components/Sidebar";
 import getThemeStyles from "./assets/themes";
-import { X, PenLine } from "lucide-react";
-import Mark from "./components/Mark/Mark";
-
+import Marks from "./components/Marks/Marks";
+import UiBlockPanel from "./components/UiBlockPanel/UiBlockPanel";
+import TitleForm from "./components/TitleForm/TitleForm";
+import TitlePanel from "./components/TitlePanel/TitlePanel";
 function App() {
   const initialFields = schema;
 
@@ -19,7 +20,6 @@ function App() {
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
   const [edit, setEdit] = useState(true);
   const [type, setType] = useState("field");
-  const [titleText, setTitleText] = useState("");
   const [dragEnd, setDragEnd] = useState(false);
 
   useEffect(() => {
@@ -250,17 +250,16 @@ function App() {
   const deleteField = (rowIndex, columnIndex, fieldIndex, fieldType) => {
     const movedField = rightFieldGroups[rowIndex][columnIndex][fieldIndex];
     setRightFieldGroups((prev) => {
-      prev[rowIndex][columnIndex] = prev[rowIndex][columnIndex].filter((_, fieldID) => fieldID !== fieldIndex)
-      prev[rowIndex] = prev[rowIndex].filter((arr) => arr.length !== 0) 
-      return prev
+      prev[rowIndex][columnIndex] = prev[rowIndex][columnIndex].filter(
+        (_, fieldID) => fieldID !== fieldIndex
+      );
+      prev[rowIndex] = prev[rowIndex].filter((arr) => arr.length !== 0);
+      return prev;
     });
-
 
     if (fieldType === "title") setTitleField((prev) => [movedField, ...prev]);
     else setLeftFields((prev) => [movedField, ...prev]);
   };
-
-  
 
   const [theme, setTheme] = useState("");
   const [themeStyles, setThemeStyles] = useState({});
@@ -303,10 +302,14 @@ function App() {
       mark.map((group) =>
         group.map((row) =>
           row.map((col) => {
-            if (col.type === "title")
+            if (col.type === "title"){
+              let TitleText = col.title.split(" ")
+              TitleText.shift()
+              let text = TitleText.join(" ")
               return {
-                title: col.title,
+                title: text,
               };
+            }
             else if (col.type === "line")
               return {
                 customComponent: "Line",
@@ -348,21 +351,18 @@ function App() {
   }, [rightFieldGroups]);
 
   const deleteMark = (index) => {
-    if(marks[index] && marks[index][0]){       
-          marks[index].forEach(row=>{
-          row.forEach(col=>{
-            col.forEach(field => {
-              if(field.type && field.type==="title")
-                setTitleField(prev=>[field,...prev])
-              else if(field.type && field.type==="line")
-                return
-              else
-                setLeftFields(prev=>[field,...prev])
-            })
-          })
-        })
-
-  }
+    if (marks[index] && marks[index][0]) {
+      marks[index].forEach((row) => {
+        row.forEach((col) => {
+          col.forEach((field) => {
+            if (field.type && field.type === "title")
+              setTitleField((prev) => [field, ...prev]);
+            else if (field.type && field.type === "line") return;
+            else setLeftFields((prev) => [field, ...prev]);
+          });
+        });
+      });
+    }
 
     setMarkNames((prev) => prev.filter((name, id) => id !== index));
     setMarks((prev) => {
@@ -375,7 +375,6 @@ function App() {
       }
       return prev.filter((mark, markID) => markID !== index);
     });
-    
   };
 
   const changeMark = (index) => {
@@ -392,7 +391,6 @@ function App() {
     }
   }, [buttonClicked, marks]);
 
-
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -406,59 +404,19 @@ function App() {
             }
             theme={theme}
           >
-            <div className="marks">
-              {/*
-              <button onClick={() => setTheme("dark")}>dark Theme</button>
-          <button onClick={() => setTheme("light")}>light Theme</button>*/}
-              {marks.map((mark, i) => {
-                return (
-                  <Mark
-                    activeMark={activeMark}
-                    themeStyles={themeStyles}
-                    theme={theme}
-                    index={i}
-                    edit={edit}
-                    markNames={markNames}
-                    changeMark={changeMark}
-                    deleteMark={deleteMark}
-                    setMarkNames={setMarkNames}
-                  />
-                );
-              })}
-              {edit && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                  }}
-                >
-                  <button
-                    onClick={() => {
-                      setMarks((prevMarks) => [...prevMarks, []]);
-                      setMarkNames((prevNames) => [
-                        ...prevNames,
-                        `Záložka ${prevNames.length}`,
-                      ]);
-                      setButtonClicked(true);
-                    }}
-                    style={{
-                      cursor: "pointer",
-                      border: "none",
-                      outline: "none",
-                      width: "35px",
-                      height: "35px",
-                      borderRadius: "50%",
-                      backgroundColor: `${themeStyles.field}`,
-                      color: `${themeStyles.textPrimary}`,
-                      fontSize: "24px",
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              )}
-            </div>
+            <Marks
+              activeMark={activeMark}
+              themeStyles={themeStyles}
+              theme={theme}
+              edit={edit}
+              markNames={markNames}
+              changeMark={changeMark}
+              deleteMark={deleteMark}
+              setMarkNames={setMarkNames}
+              setMarks={setMarks}
+              marks={marks}
+              setButtonClicked={setButtonClicked}
+            />
           </Sidebar>
 
           <Sidebar
@@ -468,43 +426,7 @@ function App() {
             nextBgColor={themeStyles.bgTmavsia}
             theme={theme}
           >
-            <Droppable droppableId="left-list" type="field">
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  className="left-panel"
-                  {...provided.droppableProps}
-                >
-                  {leftFields.map((field, index) => {
-                    if (field.type !== "title")
-                      return (
-                        <Draggable
-                          key={field.field}
-                          draggableId={field.field}
-                          index={index}
-                          type="field"
-                          isDragDisabled={!edit}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="field"
-                              style={{
-                                ...provided.draggableProps.style,
-                              }}
-                            >
-                              {field.title}
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+            <UiBlockPanel edit={edit} leftFields={leftFields} />
           </Sidebar>
 
           <Sidebar
@@ -514,77 +436,12 @@ function App() {
             nextBgColor={themeStyles.bgTmavsia}
             theme={theme}
           >
-            <form
-              className="titleInputBox"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (titleText.length) {
-                  setTitleField((prev) => [
-                    {
-                      type: "title",
-                      title: "Nadpis: " + titleText,
-                      field: titleText + "-" + Date.now(),
-                    },
-                    ...prev,
-                  ]);
-                  setTitleText("");
-                }
-              }}
-            >
-              <input
-                value={titleText}
-                onChange={(e) => setTitleText(e.target.value)}
-                placeholder="Nadpis"
-                style={{ color: theme === "light" && "black" }}
-              />
-              <button>Pridať Nadpis</button>
-            </form>
-            <Droppable droppableId="title-list" type="field">
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  className="left-panel"
-                  style={{ marginTop: "10px" }}
-                  {...provided.droppableProps}
-                >
-                  {titleField.map((field, index) => {
-                    return (
-                      <Draggable
-                        key={field.field}
-                        draggableId={field.field}
-                        index={index}
-                        type="field"
-                        isDragDisabled={!edit}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="field"
-                            style={{
-                              position:"relative",
-                              ...provided.draggableProps.style,
-                            }}
-                          >
-                            {field.title}
-                            {edit && (
-                              <div
-                                className="delete"
-                                onClick={() => setTitleField(prev=>prev.filter((field,id)=> id!==index))}
-                              >
-                                X
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+            <TitleForm setTitleField={setTitleField} theme={theme} />
+            <TitlePanel
+              edit={edit}
+              titleField={titleField}
+              setTitleField={setTitleField}
+            />
           </Sidebar>
 
           <div className="right-panel-wrapper">

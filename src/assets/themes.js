@@ -5,7 +5,7 @@ export default function getThemesStyle(theme) {
     field: "#1565c0",
     secondary: "#1565c0",
     textPrimary: "white",
-    textSecondary: "#101010"
+    textSecondary: "#101010",
   };
   const darkTheme = {
     bgSvetlejsia: "#413543",
@@ -13,7 +13,7 @@ export default function getThemesStyle(theme) {
     field: "#8F43EE",
     secondary: "#F0EB8D",
     textPrimary: "white",
-    textSecondary: "whitesmoke"
+    textSecondary: "whitesmoke",
   };
   switch (theme) {
     case "light":
@@ -23,4 +23,13 @@ export default function getThemesStyle(theme) {
     default:
       return lightTheme;
   }
+}
+
+export function ThemeButtons(props) {
+  return (
+    <>
+      <button onClick={() => props.setTheme("dark")}>dark Theme</button>
+      <button onClick={() => props.setTheme("light")}>light Theme</button>
+    </>
+  );
 }
