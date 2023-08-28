@@ -5,8 +5,8 @@ import "./index.css";
 import schema from "./schemas/schema_3.json";
 import Sidebar from "./components/Sidebar";
 import getThemeStyles from "./assets/themes";
-import { X, PenLine } from 'lucide-react';
-import Mark from './components/Mark'
+import { X, PenLine } from "lucide-react";
+import Mark from "./components/Mark/Mark";
 
 function App() {
   const initialFields = schema;
@@ -14,7 +14,7 @@ function App() {
   const [leftFields, setLeftFields] = useState(initialFields);
   const [titleField, setTitleField] = useState([]);
   const [marks, setMarks] = useState([[]]);
-  const [markNames, setMarkNames] = useState(["Formulár"])
+  const [markNames, setMarkNames] = useState(["Formulár"]);
   const [activeMark, setActiveMark] = useState(0);
   const [rightFieldGroups, setRightFieldGroups] = useState(marks[activeMark]);
   const [edit, setEdit] = useState(true);
@@ -280,23 +280,23 @@ function App() {
     document
       .querySelector(":root")
       .style.setProperty("--bgSvetlejsia", themeStyles.bgSvetlejsia);
-      document
-        .querySelector(":root")
-        .style.setProperty("--field", themeStyles.field);
+    document
+      .querySelector(":root")
+      .style.setProperty("--field", themeStyles.field);
     document
       .querySelector(":root")
       .style.setProperty("--bgTmavsia", themeStyles.bgTmavsia);
-      document
-        .querySelector(":root")
-        .style.setProperty("--secondary", themeStyles.secondary);
-        
-      document
+    document
+      .querySelector(":root")
+      .style.setProperty("--secondary", themeStyles.secondary);
+
+    document
       .querySelector(":root")
       .style.setProperty("--textSecondary", themeStyles.textSecondary);
-      
-      document
-        .querySelector(":root")
-        .style.setProperty("--textPrimary", themeStyles.textPrimary);
+
+    document
+      .querySelector(":root")
+      .style.setProperty("--textPrimary", themeStyles.textPrimary);
   }, [themeStyles]);
 
   const generate = () => {
@@ -321,10 +321,9 @@ function App() {
       )
     );
 
-    
     fieldData = fieldData.map((mark, i) => {
-      return [{markName: markNames[i]}, ...mark]
-    })
+      return [{ markName: markNames[i] }, ...mark];
+    });
 
     const jsonData = JSON.stringify(fieldData, null, 2);
     // Vytvořte Blob objekt z JSON dat
@@ -342,26 +341,25 @@ function App() {
     // Uvolnění URL objektu
     URL.revokeObjectURL(url);
   };
-  
+
   useEffect(() => {
     const updatedMarks = [...marks];
     updatedMarks[activeMark] = rightFieldGroups;
     setMarks(updatedMarks);
   }, [rightFieldGroups]);
 
-  const deleteMark = (index) => { 
-    setMarkNames(prev => prev.filter((name, id) => id !== index))  
-      setMarks(prev => {
-        if(index===activeMark){
-          setActiveMark(0);
-          setRightFieldGroups(marks[0])
-        }else if(index < activeMark){     
-          setRightFieldGroups(marks[activeMark]) 
-          setActiveMark(prev => prev-1);
-        }
-        return prev.filter((mark, markID) => markID!==index)
-      });
-      
+  const deleteMark = (index) => {
+    setMarkNames((prev) => prev.filter((name, id) => id !== index));
+    setMarks((prev) => {
+      if (index === activeMark) {
+        setActiveMark(0);
+        setRightFieldGroups(marks[0]);
+      } else if (index < activeMark) {
+        setRightFieldGroups(marks[activeMark]);
+        setActiveMark((prev) => prev - 1);
+      }
+      return prev.filter((mark, markID) => markID !== index);
+    });
   };
 
   const changeMark = (index) => {
@@ -378,6 +376,10 @@ function App() {
     }
   }, [buttonClicked, marks]);
 
+  useEffect(() => {
+    console.log(markNames);
+  }, [markNames]);
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -391,13 +393,14 @@ function App() {
             }
             theme={theme}
           >
-            <div className="marks">{/*
+            <div className="marks">
+              {/*
               <button onClick={() => setTheme("dark")}>dark Theme</button>
           <button onClick={() => setTheme("light")}>light Theme</button>*/}
-              {marks.map((mark, i) => {               
+              {marks.map((mark, i) => {
                 return (
-                  <Mark 
-                    activeMark={activeMark} 
+                  <Mark
+                    activeMark={activeMark}
                     themeStyles={themeStyles}
                     theme={theme}
                     index={i}
@@ -405,38 +408,43 @@ function App() {
                     markNames={markNames}
                     changeMark={changeMark}
                     deleteMark={deleteMark}
+                    setMarkNames={setMarkNames}
                   />
                 );
               })}
-              {edit &&
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <button
-                  onClick={() => {
-                    setMarks((prevMarks) => [...prevMarks, []]);
-                    setMarkNames((prevNames) => [...prevNames, `Záložka ${prevNames.length}`]);
-                    setButtonClicked(true);
-                  }}
+              {edit && (
+                <div
                   style={{
-                    cursor: "pointer",
-                    border: "none",
-                    outline: "none",
-                    width: "35px",
-                    height:"35px",
-                    borderRadius:"50%",
-                    backgroundColor: `${themeStyles.field}`,
-                    color: `${themeStyles.textPrimary}`,
-                    fontSize: "24px"
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
                   }}
                 >
-                  +
-                </button>
-              </div>}
+                  <button
+                    onClick={() => {
+                      setMarks((prevMarks) => [...prevMarks, []]);
+                      setMarkNames((prevNames) => [
+                        ...prevNames,
+                        `Záložka ${prevNames.length}`,
+                      ]);
+                      setButtonClicked(true);
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      border: "none",
+                      outline: "none",
+                      width: "35px",
+                      height: "35px",
+                      borderRadius: "50%",
+                      backgroundColor: `${themeStyles.field}`,
+                      color: `${themeStyles.textPrimary}`,
+                      fontSize: "24px",
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              )}
             </div>
           </Sidebar>
 
@@ -514,7 +522,7 @@ function App() {
                 value={titleText}
                 onChange={(e) => setTitleText(e.target.value)}
                 placeholder="Nadpis"
-                style={{color: theme==="light" && "black"}}
+                style={{ color: theme === "light" && "black" }}
               />
               <button>Pridať Nadpis</button>
             </form>
@@ -542,10 +550,19 @@ function App() {
                             {...provided.dragHandleProps}
                             className="field"
                             style={{
+                              position:"relative",
                               ...provided.draggableProps.style,
                             }}
                           >
                             {field.title}
+                            {edit && (
+                              <div
+                                className="delete"
+                                onClick={() => setTitleField(prev=>prev.filter((field,id)=> id!==index))}
+                              >
+                                X
+                              </div>
+                            )}
                           </div>
                         )}
                       </Draggable>
@@ -560,7 +577,9 @@ function App() {
           <div className="right-panel-wrapper">
             <div className="info">
               <div className="text">
-                <h4 style={{color: theme==="light" && "black"}}>Vytvorte UI schému</h4>
+                <h4 style={{ color: theme === "light" && "black" }}>
+                  Vytvorte UI schému
+                </h4>
                 <p>
                   Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
                   nadpisov a ďalších komponentov
@@ -912,16 +931,19 @@ function App() {
                                     >
                                       {rightFieldGroups.length === 0 ? (
                                         <div className="text">
-                                          <h2 style={{color: theme==="light" && "black"}}>UI SCHÉMA</h2>
-                                          <p>
-                                            pretiahnite a pustite daný blok
-                                          </p>
+                                          <h2
+                                            style={{
+                                              color:
+                                                theme === "light" && "black",
+                                            }}
+                                          >
+                                            UI SCHÉMA
+                                          </h2>
+                                          <p>pretiahnite a pustite daný blok</p>
                                           <h4>+</h4>
                                         </div>
                                       ) : (
-                                        <div>
-                                          +
-                                        </div>
+                                        <div>+</div>
                                       )}
                                     </div>
                                   );

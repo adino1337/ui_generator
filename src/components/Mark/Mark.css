@@ -1,0 +1,14 @@
+.form{
+    width: 80%;
+
+}
+.input{
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--field);
+    outline: none;
+    font-size: 1.17em;
+    margin: 5px 0;
+    padding: 0;
+    background-color: var(--bgTmavsia);
+}
