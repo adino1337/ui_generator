@@ -250,15 +250,12 @@ function App() {
   const deleteField = (rowIndex, columnIndex, fieldIndex, fieldType) => {
     const movedField = rightFieldGroups[rowIndex][columnIndex][fieldIndex];
     setRightFieldGroups((prev) => {
-      return prev.map((row, rowID) => {
-        if (rowID !== rowIndex) return row;
-
-        return row.map((column, colID) => {
-          if (colID !== columnIndex) return column;
-          return column.filter((field, fieldID) => fieldID !== fieldIndex);
-        });
-      });
+      prev[rowIndex][columnIndex] = prev[rowIndex][columnIndex].filter((_, fieldID) => fieldID !== fieldIndex)
+      prev[rowIndex] = prev[rowIndex].filter((arr) => arr.length !== 0) 
+      return prev
     });
+
+
     if (fieldType === "title") setTitleField((prev) => [movedField, ...prev]);
     else setLeftFields((prev) => [movedField, ...prev]);
   };
@@ -395,9 +392,6 @@ function App() {
     }
   }, [buttonClicked, marks]);
 
-  useEffect(() => {
-    console.log(marks);
-  }, [marks]);
 
   return (
     <>
