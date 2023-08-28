@@ -1,5 +1,5 @@
 import { useState} from "react";
-
+import "./TitleForm.css"
 export default function TitleForm(props){
     const [titleText, setTitleText] = useState("");
 

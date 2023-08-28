@@ -1,5 +1,5 @@
 import Mark from "../Mark/Mark";
-
+import "./Marks.css";
 export default function Marks(props){
     return(
     <div className="marks">

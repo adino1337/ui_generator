@@ -1,0 +1,13 @@
+.marks {
+  max-height: 80vh;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.marks::-webkit-scrollbar {
+  display: none;
+}

@@ -1,5 +1,5 @@
 import {Droppable, Draggable } from "react-beautiful-dnd";
-
+import "./TitlePanel.css"
 export default function TitlePanel(props){
     
     return(

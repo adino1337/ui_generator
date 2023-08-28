@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import "./Sidebar.css"
 export default function Sidebar(props) {
   const [sidePanel, setSidePanel] = useState(true);
 

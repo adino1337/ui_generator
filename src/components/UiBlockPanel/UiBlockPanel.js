@@ -1,5 +1,5 @@
 import {Draggable, Droppable } from "react-beautiful-dnd";
-
+import "./UiBlockPanel.css"
 export default function UiBlockPanel(props){
     return(
         <Droppable droppableId="left-list" type="field">
