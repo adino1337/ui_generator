@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import "./App.css";
-import "./index.css";
+import "../App.css";
+import "../index.css";
 import { X, PenLine } from 'lucide-react';
 
 export default function Mark(props){
+    let active = props.activeMark === props.index ? "bold" : "normal";
+    let border =
+      props.activeMark === props.index ? `3px solid ${props.themeStyles.field}` : props.theme==="dark" ? `3px solid ${props.themeStyles.textPrimary}` : "3px solid black";
     return(
         <div className="mark">
                   <div
@@ -12,7 +15,7 @@ export default function Mark(props){
                       borderLeft: border,
                     }}
                     onClick={() => {
-                        changeMark(i)
+                        props.changeMark(props.index)
                     }}
                   >
                     <h3
@@ -20,24 +23,24 @@ export default function Mark(props){
                         cursor: "pointer",
                         fontWeight: active,
                         margin: "5px 0",
-                        color: activeMark === i ? `${themeStyles.field}` : theme==="dark" ? `${themeStyles.textPrimary}`: "black"
+                        color: props.activeMark === props.index ? `${props.themeStyles.field}` : props.theme==="dark" ? `${props.themeStyles.textPrimary}`: "black"
                       }}
                     >
-                      {markNames[i]}
+                      {props.markNames[props.index]}
                     </h3>
                     
                   </div>
                   {
-                    edit && i!==0 &&
+                    props.edit && props.index!==0 &&
                     <div
                     className="icons">
                     <X
                       size={18}
-                      onClick={()=>deleteMark(i)}
+                      onClick={()=>props.deleteMark(props.index)}
                     />
                     <PenLine 
                     size={22}
-                    onClick={()=>console.log(i)}
+                    onClick={()=>console.log(props.index)}
                     />
                     </div>
                   }

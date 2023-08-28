@@ -6,6 +6,7 @@ import schema from "./schemas/schema_3.json";
 import Sidebar from "./components/Sidebar";
 import getThemeStyles from "./assets/themes";
 import { X, PenLine } from 'lucide-react';
+import Mark from './components/Mark'
 
 function App() {
   const initialFields = schema;
@@ -393,48 +394,18 @@ function App() {
             <div className="marks">{/*
               <button onClick={() => setTheme("dark")}>dark Theme</button>
           <button onClick={() => setTheme("light")}>light Theme</button>*/}
-              {marks.map((mark, i) => {
-                let active = activeMark === i ? "bold" : "normal";
-                let border =
-                  activeMark === i ? `3px solid ${themeStyles.field}` : theme==="dark" ? `3px solid ${themeStyles.textPrimary}` : "3px solid black";
+              {marks.map((mark, i) => {               
                 return (
-                  <div className="mark">
-                  <div
-                    className="markText"
-                    style={{
-                      borderLeft: border,
-                    }}
-                    onClick={() => {
-                        changeMark(i)
-                    }}
-                  >
-                    <h3
-                      style={{
-                        cursor: "pointer",
-                        fontWeight: active,
-                        margin: "5px 0",
-                        color: activeMark === i ? `${themeStyles.field}` : theme==="dark" ? `${themeStyles.textPrimary}`: "black"
-                      }}
-                    >
-                      {markNames[i]}
-                    </h3>
-                    
-                  </div>
-                  {
-                    edit && i!==0 &&
-                    <div
-                    className="icons">
-                    <X
-                      size={18}
-                      onClick={()=>deleteMark(i)}
-                    />
-                    <PenLine 
-                    size={22}
-                    onClick={()=>console.log(i)}
-                    />
-                    </div>
-                  }
-                  </div>
+                  <Mark 
+                    activeMark={activeMark} 
+                    themeStyles={themeStyles}
+                    theme={theme}
+                    index={i}
+                    edit={edit}
+                    markNames={markNames}
+                    changeMark={changeMark}
+                    deleteMark={deleteMark}
+                  />
                 );
               })}
               {edit &&
