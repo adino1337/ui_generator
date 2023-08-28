@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import "./Sidebar.css"
+import { ArrowRight, ArrowLeft,ArrowDown, ArrowUp} from 'lucide-react';
+
+
 export default function Sidebar(props) {
   const [sidePanel, setSidePanel] = useState(true);
 
@@ -25,7 +28,7 @@ if(props.orientation !== "horizontal" && props.edit){
       {sidePanel ? (
         <>
           <h1 className="close-panel-icon" onClick={() =>{setSidePanel(false)}}>
-            {"<"}
+            {<ArrowLeft/>}
           </h1>
           <h4 className="side-panel-title">{props.title}</h4>
           {props.children}
@@ -37,7 +40,7 @@ if(props.orientation !== "horizontal" && props.edit){
         <>
         <h1 className="sidewaysText">{props.title}</h1>
         <h1 className="open-panel-icon" onClick={() =>{setSidePanel(true)}}>
-          {">"}
+          {<ArrowRight />}
         </h1>
         <div className="side-panel-bg"
             style={{backgroundColor: props.nextBgColor}}
@@ -68,7 +71,7 @@ if(props.orientation !== "horizontal" && props.edit){
     {sidePanel ? (
         <>
         <h1 className="close-panel-icon-horizontal" onClick={() => setSidePanel(false)}>
-          {"<"}
+          {<ArrowUp />}
         </h1>
         
         <h4 className="side-panel-title-horizontal">{props.title}</h4>
@@ -84,7 +87,7 @@ if(props.orientation !== "horizontal" && props.edit){
         <>
         <h3 className="side-panel-title-horizontal-open">{props.title}</h3>
         <h1 className="open-panel-icon-horizontal" onClick={() => setSidePanel(true)}>
-          {">"}
+          {<ArrowDown />}
         </h1>
         <div className="side-panel-bg"
             style={{backgroundColor: props.nextBgColor}}
