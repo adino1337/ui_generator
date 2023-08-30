@@ -111,7 +111,67 @@
     background-color: var(--bgSvetlejsia);
     border-radius: 20px;
     min-height: fit-content;
+    position: relative;
   }
+  .settings{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 100;
+  }
+
+  .settings .icon{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+  }
+  .settings input, label{
+    cursor: pointer;
+  }
+
+  .settings .radioButtons{
+    padding: 20px;
+    border-radius: 15px 0 15px 15px ;
+    color: var(--textSecondary);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--bgSvetlejsia);
+    position: relative;
+
+    top: 35px;
+    right: -4px;
+    z-index: 180;
+  }
+  .settings .stvorec{
+    position: absolute;
+    top: 25px;
+    right: 0px;
+    transform: rotate(45deg);
+    width: 20px;
+    height: 20px;
+  }
+  .settings .radioButtons h4{
+    margin: 0;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .settings .radioButtons h4::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -15px;
+    background-color: var(--textSecondary);
+    width: 20%;
+    height: 2px;
+  }
+  .settings .radioButtons .inputBox{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
   
   .right-panel .column-droppable{
     background: var(--bgSvetlejsia);                                                            

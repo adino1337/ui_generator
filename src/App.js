@@ -10,7 +10,7 @@ import TitleForm from "./components/TitleForm/TitleForm";
 import TitlePanel from "./components/TitlePanel/TitlePanel";
 import MainDroppable from "./components/MainDroppable/MainDroppable";
 import EditButtons from "./components/EditButtons/EditButtons";
-import {ThemeButtons} from "./assets/themes"
+import { ThemeButtons } from "./assets/themes";
 function App() {
   const initialFields = schema;
 
@@ -55,11 +55,15 @@ function App() {
     ) {
       let rowNumber = sourceList.split("-")[1];
       let columnNumber = sourceList.split("-")[2];
+
       const sourceFields = rightFieldGroups[rowNumber][columnNumber];
       const [movedField] = sourceFields.splice(result.source.index, 1);
+
       setRightFieldGroups((prev) => [...prev, [[movedField]]]);
+
       return;
     }
+
     if (sourceList === "title-list" && destinationList === "left-list") return;
     if (sourceList === "left-list" && destinationList === "title-list") return;
 
@@ -303,15 +307,14 @@ function App() {
       mark.map((group) =>
         group.map((row) =>
           row.map((col) => {
-            if (col.type === "title"){
-              let TitleText = col.title.split(" ")
-              TitleText.shift()
-              let text = TitleText.join(" ")
+            if (col.type === "title") {
+              let TitleText = col.title.split(" ");
+              TitleText.shift();
+              let text = TitleText.join(" ");
               return {
                 title: text,
               };
-            }
-            else if (col.type === "line")
+            } else if (col.type === "line")
               return {
                 customComponent: "Line",
               };
@@ -418,7 +421,7 @@ function App() {
               marks={marks}
               setButtonClicked={setButtonClicked}
             />
-            <ThemeButtons 
+            <ThemeButtons
               setTheme={setTheme}
               theme={theme}
               themeStyles={themeStyles}
@@ -463,8 +466,8 @@ function App() {
               edit={edit}
               theme={theme}
               rightFieldGroups={rightFieldGroups}
-              deleteField={deleteField}    
-              setRightFieldGroups={setRightFieldGroups}          
+              deleteField={deleteField}
+              setRightFieldGroups={setRightFieldGroups}
             />
           </div>
         </div>
