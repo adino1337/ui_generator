@@ -74,6 +74,15 @@ export default function Column(props) {
                               style={styles}
                             >
                               {column.map((field, fieldIndex) => {
+                                if(props.row.length===2)
+                                {
+                                  if(props.stencil === "15|85")
+                                    field.className = columnIndex === 0 ? "detail-small" : "detail-large"
+                                  else if (props.stencil === "85|15")
+                                    field.className = columnIndex === 0 ? "detail-large" : "detail-small"
+                                  else if(props.stencil === "50|50")
+                                    field.className = null
+                                }
                                 let styles =
                                   field.type === "title"
                                     ? {

@@ -278,29 +278,18 @@ function App() {
     localStorage.setItem("theme", theme);
     setThemeStyles(getThemeStyles(theme));
   }, [theme]);
-
+  
+  function setThemeVariables(themeStyles) {
+    const root = document.querySelector(":root");
+    for (const [property, value] of Object.entries(themeStyles)) {
+      root.style.setProperty(`--${property}`, value);
+    }
+  }
+  
   useEffect(() => {
-    document
-      .querySelector(":root")
-      .style.setProperty("--bgSvetlejsia", themeStyles.bgSvetlejsia);
-    document
-      .querySelector(":root")
-      .style.setProperty("--field", themeStyles.field);
-    document
-      .querySelector(":root")
-      .style.setProperty("--bgTmavsia", themeStyles.bgTmavsia);
-    document
-      .querySelector(":root")
-      .style.setProperty("--secondary", themeStyles.secondary);
-
-    document
-      .querySelector(":root")
-      .style.setProperty("--textSecondary", themeStyles.textSecondary);
-
-    document
-      .querySelector(":root")
-      .style.setProperty("--textPrimary", themeStyles.textPrimary);
+    setThemeVariables(themeStyles);
   }, [themeStyles]);
+  
 
   const generate = () => {
     let fieldData = marks.map((mark) =>
@@ -311,17 +300,30 @@ function App() {
               let TitleText = col.title.split(" ");
               TitleText.shift();
               let text = TitleText.join(" ");
+              if(col.className === null)
               return {
                 title: text,
-              };
+              }
+              else
+              return {
+                title: text,
+                className: col.className
+              }
             } else if (col.type === "line")
               return {
                 customComponent: "Line",
               };
-            else
+            else{
+              if(col.className === null)
               return {
                 field: col.field,
-              };
+              }
+              else
+              return {
+                field: col.field,
+                className: col.className
+              }
+            }
           })
         )
       )
