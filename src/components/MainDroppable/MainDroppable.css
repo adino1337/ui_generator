@@ -93,12 +93,12 @@
     display: flex;
     padding: 20px;
     border-radius: 30px;
+    position: relative;
   }
   
   .right-panel .group{
     background: var(--bgTmavsia);
     min-height: fit-content;
-    min-width: 200px;
     flex: 1;
     display: flex;
     gap: 20px;
@@ -115,9 +115,8 @@
   }
   .settings{
     position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 100;
+    top: 20px;
+    right: 20px;
   }
 
   .settings .icon{
@@ -151,6 +150,7 @@
     transform: rotate(45deg);
     width: 20px;
     height: 20px;
+    z-index: 100;
   }
   .settings .radioButtons h4{
     margin: 0;

@@ -1,70 +1,7 @@
 import { useState } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import { Settings } from "lucide-react";
-
-function SettingsBox(props) {
-  const [openClassMenu, setOpenClassMenu] = useState(false);
 
 
-  let border =
-    props.theme === "dark"
-      ? `3px solid ${props.themeStyles.secondary}`
-      : "3px solid black";
-
-  return (
-    <div className="settings">
-      <Settings
-        className="icon"
-        size={18}
-        color={props.theme === "dark" ? props.themeStyles.secondary : "black"}
-        onClick={() => setOpenClassMenu((prev) => !prev)}
-      />
-      {openClassMenu && (
-        <>
-          <div
-            className="stvorec"
-            style={{
-              background:
-                props.theme === "dark" ? props.themeStyles.secondary : "black",
-            }}
-          ></div>
-
-          <div className="radioButtons" style={{ border: border }}>
-            <h4>Šírka</h4>
-            <div className="inputBox">
-              <label for="detail-small">malá (15%)</label>
-              <input
-                type="radio"
-                name="className"
-                value="detail-small"
-                id="detail-small"
-              />
-            </div>
-            <div className="inputBox">
-              <label for="detail-large">veľká (85%)</label>
-              <input
-                type="radio"
-                name="className"
-                value="detail-large"
-                id="detail-large"
-              />
-            </div>
-
-            <div className="inputBox">
-              <label for="auto">auto</label>
-              <input
-                type="radio"
-                name="className"
-                value="auto"
-                id="auto"
-              />
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
 
 export default function Column(props) {
     const [width,setWidth] = useState("auto")
@@ -83,7 +20,6 @@ export default function Column(props) {
             ref={providedRow.innerRef}
             className="group"
             {...providedRow.droppableProps}
-            style={{width: width}}
           >
             {props.row.map((column, columnIndex) => (
               <Draggable
@@ -92,20 +28,22 @@ export default function Column(props) {
                 index={columnIndex}
                 type="column"
                 isDragDisabled={!props.edit}
+
               >
                 {(providedField, snapshot) => {
                   let styles = {
                     ...providedField.draggableProps.style,
                   };
-                  styles = props.edit
-                    ? {
-                        ...styles,
-                        maxWidth: "200px",
-                      }
-                    : {
-                        ...styles,
-                        minWidth: "0",
-                      };
+                    if(props.edit)
+                      styles = {...styles, maxWidth: "200px"}
+                    else if(props.stencil==="50|50")
+                      styles = {...styles, minWidth: "0"}
+                    else if(props.stencil==="15|85" && columnIndex === 0)
+                        styles = {...styles, maxWidth: "15%"}
+                    else if(props.stencil==="85|15" && columnIndex === 1)
+                        styles = {...styles, maxWidth: "15%"}
+
+
 
                   return (
                     <div
@@ -115,13 +53,6 @@ export default function Column(props) {
                       style={styles}
                       className="column"
                     >
-                      {props.row.length === 2 && !props.edit && (
-                        <SettingsBox
-                          theme={props.theme}
-                          themeStyles={props.themeStyles}
-                        />
-                      )}
-
                       <Droppable
                         key={`column-${props.rowIndex}-${columnIndex}`}
                         droppableId={`column-${props.rowIndex}-${columnIndex}`}

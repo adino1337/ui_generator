@@ -2,7 +2,34 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import Sidebar from "../Sidebar/Sidebar";
 import "./MainDroppable.css";
 import Column from "./Column"
+import SettingsBox from "./SettingsBox";
+import { useState } from "react";
 
+function Row(props) {
+  const [stencil,setStencil] = useState("50|50")
+  return(
+    <>                        
+    {props.row.length === 2 && !props.edit && (
+      <SettingsBox
+        theme={props.theme}
+        themeStyles={props.themeStyles}
+        setStencil = {setStencil}
+        stencil={stencil}
+        rowIndex={props.rowIndex}
+      />
+    )}
+      <Column
+        row={props.row}
+        rowIndex={props.rowIndex}
+        themeStyles={props.themeStyles}
+        edit={props.edit}
+        theme={props.theme}
+        deleteField={props.deleteField}
+        stencil={stencil}
+      />
+      </>
+  )
+}
 
 export default function MainDroppable(props) {
   return (
@@ -76,16 +103,17 @@ export default function MainDroppable(props) {
                         {...providedField.dragHandleProps}
                         style={{
                           ...providedField.draggableProps.style,
+                          padding: !props.edit ? "40px" : "20px"
                         }}
                         className="row"
                       >
-                        <Column
-                          row={row}
-                          rowIndex={rowIndex}
-                          themeStyles={props.themeStyles}
-                          edit={props.edit}
-                          theme={props.theme}
-                          deleteField={props.deleteField}
+                        <Row
+                        row={row}
+                        rowIndex={rowIndex}
+                        themeStyles={props.themeStyles}
+                        edit={props.edit}
+                        theme={props.theme}
+                        deleteField={props.deleteField}
                         />
                       </div>
                     );
