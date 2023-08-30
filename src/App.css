@@ -1,7 +1,7 @@
 .app {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
 }
 .right-panel-wrapper {
@@ -11,4 +11,13 @@
   flex-direction: column;
   gap: 10px;
   background-color: var(--bgTmavsia);
+}
+
+.themeButtons{
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;  
 }

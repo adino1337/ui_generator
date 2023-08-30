@@ -1,11 +1,11 @@
 
 .horizontal-side-panel {  
-    transition: 1s;
+    transition: height 1s;
+
     display: flex;
     flex-direction: column;
     padding: 20px;
     justify-content: space-between;
-    transition: 1s;
     border-radius: 30px;
     gap: 20px;
     overflow: hidden;
@@ -56,7 +56,7 @@
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    transition: 1s;
+    transition: width 1s;
     border-radius: 0px 50px 50px 0px;
   }
   .side-panel-bg{

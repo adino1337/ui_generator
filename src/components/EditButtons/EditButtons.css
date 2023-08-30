@@ -5,11 +5,14 @@
     justify-content: space-between;
   }
   
-.info > .text h4{
-    color: var(--textPrimary)
+.info > .text h1{
+    color: var(--secondary);
+    margin: 0.67em 0 0.27em 0;
   }
 .info > .text p{
-    color: var(--textSecondary)
+    color: var(--textSecondary);
+    margin: 0;
+    margin-bottom: 10px;
   }
   
   .info .buttons{

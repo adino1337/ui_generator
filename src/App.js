@@ -10,7 +10,7 @@ import TitleForm from "./components/TitleForm/TitleForm";
 import TitlePanel from "./components/TitlePanel/TitlePanel";
 import MainDroppable from "./components/MainDroppable/MainDroppable";
 import EditButtons from "./components/EditButtons/EditButtons";
-
+import {ThemeButtons} from "./assets/themes"
 function App() {
   const initialFields = schema;
 
@@ -418,6 +418,11 @@ function App() {
               marks={marks}
               setButtonClicked={setButtonClicked}
             />
+            <ThemeButtons 
+              setTheme={setTheme}
+              theme={theme}
+              themeStyles={themeStyles}
+            />
           </Sidebar>
 
           <Sidebar
@@ -451,6 +456,7 @@ function App() {
               generate={generate}
               setEdit={setEdit}
               edit={edit}
+              markName={markNames[activeMark]}
             />
             <MainDroppable
               themeStyles={themeStyles}

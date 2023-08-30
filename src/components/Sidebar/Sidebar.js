@@ -16,7 +16,7 @@ if(props.orientation !== "horizontal" && props.edit){
         width: sidePanel ? "15%" : "75px",
         backgroundColor: props.bgColor,
         cursor: "pointer",
-        borderRight: props.theme==="light" ? "3px solid black" : "none"
+        borderRight: props.theme==="light" ? "3px solid black" : "3px solid black"
       }}
       onClick={(e)=>{
         if(e.target.className === "close-panel-icon" || e.target.className==="side-panel")

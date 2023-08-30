@@ -1,5 +1,7 @@
 import Mark from "../Mark/Mark";
 import "./Marks.css";
+import {ThemeButtons} from "../../assets/themes"
+
 export default function Marks(props){
     return(
     <div className="marks">
@@ -51,5 +53,7 @@ export default function Marks(props){
                   </button>
                 </div>
               )}
-            </div>);
+              
+            </div>            
+            );
 }

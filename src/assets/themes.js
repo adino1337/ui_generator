@@ -1,3 +1,4 @@
+import {Sun,Moon, Backpack} from "lucide-react"
 export default function getThemesStyle(theme) {
   const lightTheme = {
     bgSvetlejsia: "#fff",
@@ -27,9 +28,10 @@ export default function getThemesStyle(theme) {
 
 export function ThemeButtons(props) {
   return (
-    <>
-      <button onClick={() => props.setTheme("dark")}>dark Theme</button>
-      <button onClick={() => props.setTheme("light")}>light Theme</button>
-    </>
+    <div className="themeButtons">
+      <Moon color={props.theme==="dark" ? props.themeStyles.field : "black"} onClick={() => props.setTheme("dark")}/>
+      <span style={{width:"3px",background:props.themeStyles.field}}></span>
+      <Sun color={props.theme==="light" ? props.themeStyles.field : "white"} onClick={() => props.setTheme("light")}/>
+    </div>
   );
 }

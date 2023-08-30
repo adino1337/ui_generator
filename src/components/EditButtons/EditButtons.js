@@ -3,9 +3,9 @@ export default function EditButtons(props){
     return(
         <div className="info">
               <div className="text">
-                <h4 style={{ color: props.theme === "light" && "black" }}>
-                  Vytvorte UI schému
-                </h4>
+                <h1>
+                  {props.markName}
+                </h1>
                 <p>
                   Vyskladajte si vlastnú schému pomocou UI blokov, vlastných
                   nadpisov a ďalších komponentov
